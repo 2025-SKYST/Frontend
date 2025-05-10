@@ -22,22 +22,22 @@ export default function ViewChapter({ params }: { params: { id: string } }) {
 
   const [chapterTitle] = useState("어린 시절의 추억");
   const [pages] = useState<Page[]>([
-    // {
-    //   id: "1",
-    //   imageUrl: "/childhood-playground.png",
-    //   tags: ["어린시절", "놀이터", "친구"],
-    //   description: "동네 놀이터에서 친구들과 놀던 기억",
-    //   content:
-    //     "작은 동네 놀이터에서 친구들과 함께 보낸 시간은 내 어린 시절의 가장 소중한 추억이다...",
-    // },
-    // {
-    //   id: "2",
-    //   imageUrl: "/family-dinner.png",
-    //   tags: ["가족", "저녁식사", "대화"],
-    //   description: "가족과 함께한 저녁 식사 시간",
-    //   content:
-    //     "매일 저녁 온 가족이 모여 식사를 하던 시간은 하루 중 가장 행복한 순간이었다...",
-    // },
+    {
+      id: "1",
+      imageUrl: "/childhood-playground.png",
+      tags: ["어린시절", "놀이터", "친구"],
+      description: "동네 놀이터에서 친구들과 놀던 기억",
+      content:
+        "작은 동네 놀이터에서 친구들과 함께 보낸 시간은 내 어린 시절의 가장 소중한 추억이다...",
+    },
+    {
+      id: "2",
+      imageUrl: "/family-dinner.png",
+      tags: ["가족", "저녁식사", "대화"],
+      description: "가족과 함께한 저녁 식사 시간",
+      content:
+        "매일 저녁 온 가족이 모여 식사를 하던 시간은 하루 중 가장 행복한 순간이었다...",
+    },
   ]);
 
   const addPage = (index: number) => {

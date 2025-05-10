@@ -38,7 +38,7 @@ export default function MemoirTimeline() {
   ]);
 
   const addChapter = (index: number) => {
-    const newChapterId = String(Date.now());
+    const newChapterId = String(chapters.length + 1);
     const newChapter: Chapter = {
       id: newChapterId,
       title: `새 챕터 ${newChapterId}`,
@@ -75,7 +75,9 @@ export default function MemoirTimeline() {
       ) : (
         <>
           <div className="mb-12">
-            <h2 className="text-xl font-semibold text-amber-800 mb-4">챕터 목록</h2>
+            <h2 className="text-xl font-semibold text-amber-800 mb-4">
+              챕터 목록
+            </h2>
 
             <div className="w-full overflow-x-auto pb-8">
               <div
@@ -98,8 +100,10 @@ export default function MemoirTimeline() {
                   <div
                     className="flex-grow grid gap-8"
                     style={{
-                      gridTemplateColumns: `repeat(${chapters.length * 2 - 1}, 1fr)`,
-                      alignItems: 'center',
+                      gridTemplateColumns: `repeat(${
+                        chapters.length * 2 - 1
+                      }, 1fr)`,
+                      alignItems: "center",
                     }}
                   >
                     {chapters.map((chapter, index) => (
@@ -108,7 +112,10 @@ export default function MemoirTimeline() {
                           key={`chapter-${chapter.id}`}
                           className="flex flex-col items-center justify-center"
                         >
-                          <Link href={`/chapter/${chapter.id}`} className="w-64">
+                          <Link
+                            href={`/chapter/${chapter.id}`}
+                            className="w-64"
+                          >
                             <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                               <div className="h-36 overflow-hidden">
                                 <img
