@@ -48,9 +48,6 @@ export default function ViewChapter() {
     getImages(chapterId, header)
       .then((imgs) => {
         setChapterTitle(`Chapter ${chapterId}`);
-        for (const img of imgs) {
-          console.log(img.file_url);
-        }
         const mapped: Page[] = imgs.map((img) => ({
           id: String(img.id),
           imageUrl: img.file_url,
@@ -148,15 +145,18 @@ export default function ViewChapter() {
                               <Trash2 size={14} />
                             </button>
                             <div className="h-48 overflow-hidden bg-gray-100 flex items-center justify-center">
-                              <img
-                                src={page.imageUrl}
-                                alt={page.description}
-                                className="w-full h-full object-cover"
-                                onError={(e) => {
-                                  (e.currentTarget as HTMLImageElement).src =
-                                    "/placeholder.svg";
-                                }}
-                              />
+                              {typeof window !== "undefined" && (
+                                <img
+                                  src={page.imageUrl}
+                                  alt={page.description}
+                                  referrerPolicy="no-referrer"
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    (e.currentTarget as HTMLImageElement).src =
+                                      "/placeholder.svg";
+                                  }}
+                                />
+                              )}
                             </div>
                             <div className="p-5">
                               <div className="flex flex-wrap gap-1 mb-2">
@@ -169,9 +169,6 @@ export default function ViewChapter() {
                                   </span>
                                 ))}
                               </div>
-                              <p className="text-rose-900 font-medium mb-1">
-                                {page.description}
-                              </p>
                               <p className="text-orange-700 text-sm whitespace-pre-wrap">
                                 {page.content}
                               </p>
