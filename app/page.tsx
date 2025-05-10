@@ -81,7 +81,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col overflow-auto">
-      {/* 상단 배경 + 텍스트 */}
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-b from-black via-black to-transparent z-10" style={{ height: "70vh" }} />
         <div
@@ -90,43 +89,73 @@ export default function Home() {
         />
         <div className="relative z-20 pt-32 px-6 min-h-[60vh]">
           <div className="max-w-4xl mx-auto text-white">
-            {[0, 1].map((i) => (
-              <div key={i} className={`h-${i===0?"24":"24"} md:h-${i===0?"32":"32"} overflow-hidden`}>
-                <AnimatePresence mode="wait">
-                  {textIndex >= i && (
-                    <motion.h1
-                      key={`heading${i}`}
-                      className="text-4xl md:text-5xl lg:text-6xl font-bold mb-3 leading-tight"
-                      variants={textVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                    >
-                      {texts[i]}
-                    </motion.h1>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
+            <div className="h-24 md:h-32 overflow-hidden">
+              <AnimatePresence mode="wait">
+                {textIndex >= 0 && (
+                  <motion.h1
+                    key="heading1"
+                    className="text-4xl md:text-5xl lg:text-6xl font-bold mb-3 leading-tight"
+                    variants={textVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                  >
+                    {texts[0]}
+                  </motion.h1>
+                )}
+              </AnimatePresence>
+            </div>
 
-            {[2, 3].map((i) => (
-              <div key={i} className="h-12 md:h-16 overflow-hidden">
-                <AnimatePresence mode="wait">
-                  {textIndex >= i && (
-                    <motion.p
-                      key={`para${i}`}
-                      className="text-lg md:text-xl text-gray-300 max-w-3xl"
-                      variants={textVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                    >
-                      {texts[i]}
-                    </motion.p>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
+            <div className="h-24 md:h-32 overflow-hidden">
+              <AnimatePresence mode="wait">
+                {textIndex >= 1 && (
+                  <motion.h1
+                    key="heading2"
+                    className="text-4xl md:text-5xl lg:text-6xl font-bold mb-3 leading-tight"
+                    variants={textVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                  >
+                    {texts[1]}
+                  </motion.h1>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <div className="h-12 md:h-16 overflow-hidden">
+              <AnimatePresence mode="wait">
+                {textIndex >= 2 && (
+                  <motion.p
+                    key="paragraph1"
+                    className="text-lg md:text-xl text-gray-300 max-w-3xl"
+                    variants={textVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                  >
+                    {texts[2]}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <div className="h-12 md:h-16 overflow-hidden">
+              <AnimatePresence mode="wait">
+                {textIndex >= 2 && (
+                  <motion.p
+                    key="paragraph1"
+                    className="text-lg md:text-xl text-gray-300 max-w-3xl"
+                    variants={textVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                  >
+                    {texts[3]}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
       </div>
