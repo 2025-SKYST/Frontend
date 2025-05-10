@@ -10,6 +10,9 @@ interface Chapter {
   title: string;
   createdAt: string;
   pageCount: number;
+  imageUrl?: string;
+  tags: string[];
+  description: string;
 }
 
 export default function MemoirTimeline() {
@@ -19,8 +22,19 @@ export default function MemoirTimeline() {
       title: "어린 시절의 추억",
       createdAt: "2023-01-15",
       pageCount: 5,
+      imageUrl: "/childhood-playground.png",
+      tags: ["어린시절", "놀이터", "친구"],
+      description: "동네 놀이터에서 친구들과 놀던 기억",
     },
-    { id: "2", title: "대학 생활", createdAt: "2023-02-20", pageCount: 3 },
+    {
+      id: "2",
+      title: "대학 생활",
+      createdAt: "2023-02-20",
+      pageCount: 3,
+      imageUrl: "/family-dinner.png",
+      tags: ["가족", "저녁식사", "대화"],
+      description: "가족과 함께한 저녁 식사 시간",
+    },
   ]);
 
   const addChapter = (index: number) => {
@@ -30,6 +44,9 @@ export default function MemoirTimeline() {
       title: `새 챕터 ${newChapterId}`,
       createdAt: new Date().toISOString().split("T")[0],
       pageCount: 0,
+      imageUrl: "/placeholder.svg",
+      tags: ["새로운", "챕터"],
+      description: "새로운 챕터 설명을 입력하세요",
     };
 
     const newChapters = [...chapters];
@@ -37,9 +54,9 @@ export default function MemoirTimeline() {
     setChapters(newChapters);
   };
 
-  // Calculate minimum width with more spacing
-  // Base width + chapter spacing + padding
-  const minWidth = Math.max(900, chapters.length * 200 + 200);
+  // Calculate minimum width with more spacing for cards
+  // Each card is wider than the circles were
+  const minWidth = Math.max(1200, chapters.length * 300 + 300);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-amber-50 to-amber-100 p-6">
@@ -70,35 +87,62 @@ export default function MemoirTimeline() {
               </div>
 
               {/* Main timeline content - using grid for even spacing with more gap */}
-              <div 
-                className="flex-grow grid gap-8" 
-                style={{ 
-                  gridTemplateColumns: `repeat(${chapters.length * 2 - 1}, 1fr)`,
-                  alignItems: "center"
+              <div
+                className="flex-grow grid gap-8"
+                style={{
+                  gridTemplateColumns: `repeat(${
+                    chapters.length * 2 - 1
+                  }, 1fr)`,
+                  alignItems: "center",
                 }}
               >
                 {chapters.map((chapter, index) => (
                   <>
-                    {/* Chapter node */}
-                    <div key={`chapter-${chapter.id}`} className="flex flex-col items-center justify-center">
-                      <Link href={`/chapter/${chapter.id}`}>
-                        <div className="w-16 h-16 rounded-full bg-amber-800 text-white flex items-center justify-center mb-2 hover:bg-amber-700 transition-colors">
-                          {index + 1}
+                    {/* Chapter card - replacing the circular nodes */}
+                    <div
+                      key={`chapter-${chapter.id}`}
+                      className="flex flex-col items-center justify-center"
+                    >
+                      <Link href={`/chapter/${chapter.id}`} className="w-64">
+                        <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                          <div className="h-36 overflow-hidden">
+                            <img
+                              src={chapter.imageUrl || "/placeholder.svg"}
+                              alt={chapter.description}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div className="p-3">
+                            <div className="flex flex-wrap gap-1 mb-1">
+                              {chapter.tags.map((tag) => (
+                                <span
+                                  key={tag}
+                                  className="px-2 py-0.5 bg-amber-100 text-amber-800 text-xs rounded-full"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                            <h3 className="font-medium text-amber-900 truncate">
+                              {chapter.title}
+                            </h3>
+                            <p className="text-xs text-amber-700 mt-1">
+                              {chapter.pageCount}페이지
+                            </p>
+                            <p className="text-xs text-amber-700 mt-1 line-clamp-2">
+                              {chapter.description}
+                            </p>
+                          </div>
                         </div>
                       </Link>
-                      <div className="text-center w-32">
-                        <h3 className="font-medium text-amber-900 truncate">
-                          {chapter.title}
-                        </h3>
-                        <p className="text-sm text-amber-700">
-                          {chapter.pageCount}페이지
-                        </p>
-                      </div>
                     </div>
 
                     {/* Add button after each chapter (except last) */}
                     {index < chapters.length - 1 && (
-                      <div key={`add-${chapter.id}`} className="flex items-center justify-center">
+                      <div
+                        key={`add-${chapter.id}`}
+                        className="flex items-center justify-center"
+                      >
                         <button
                           onClick={() => addChapter(index + 1)}
                           className="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center hover:bg-amber-500 transition-colors"
