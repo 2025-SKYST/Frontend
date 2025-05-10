@@ -1,14 +1,13 @@
-"use client"
+// app/memoir-timeline/page.tsx (또는 pages/memoir-timeline.tsx)
+"use client";
 
-import type React from "react"
-
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { PlusCircle, Trash2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import Header from "@/components/header"
-import UserHeader from "@/components/user-header"
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { PlusCircle, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Header from "@/components/header";
+import UserHeader from "@/components/user-header";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,78 +17,60 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
 
-interface Chapter {
-  id: string
-  title: string
-  createdAt: string
-  pageCount: number
-  imageUrl?: string
-  tags: string[]
-  description: string
-}
+import { useAuth } from "@/hooks/useAuth";
+import { getChapters, Chapter as ApiChapter } from "@/lib/chapterService";
 
 export default function MemoirTimeline() {
-  const router = useRouter()
+  const router = useRouter();
+  const { getAuthHeader } = useAuth();
 
-  const [chapters, setChapters] = useState<Chapter[]>([
-    {
-      id: "1",
-      title: "어린 시절의 추억",
-      createdAt: "2023-01-15",
-      pageCount: 5,
-      imageUrl: "/childhood-playground.png",
-      tags: ["어린시절", "놀이터", "친구"],
-      description: "동네 놀이터에서 친구들과 놀던 기억",
-    },
-    {
-      id: "2",
-      title: "대학 생활",
-      createdAt: "2023-02-20",
-      pageCount: 3,
-      imageUrl: "/family-dinner.png",
-      tags: ["가족", "저녁식사", "대화"],
-      description: "가족과 함께한 저녁 식사 시간",
-    },
-  ])
+  const [chapters, setChapters] = useState<ApiChapter[]>([]);
+  const [deleteChapterId, setDeleteChapterId] = useState<number | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  const [deleteChapterId, setDeleteChapterId] = useState<string | null>(null)
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  // API에서 챕터 목록 fetch
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await getChapters(getAuthHeader());
+        setChapters(res.chapters);
+      } catch (err) {
+        console.error("챕터 목록 조회 실패:", err);
+      }
+    })();
+  }, [getAuthHeader]);
 
   const addChapter = (index: number) => {
-    const newChapterId = String(chapters.length + 1)
-    const newChapter: Chapter = {
-      id: newChapterId,
-      title: `새 챕터 ${newChapterId}`,
-      createdAt: new Date().toISOString().split("T")[0],
-      pageCount: 0,
-      imageUrl: "/placeholder.svg",
-      tags: ["새로운", "챕터"],
-      description: "새로운 챕터 설명을 입력하세요",
-    }
+    // 임시 추가 (API 미연동 가정)
+    const newChapter: ApiChapter = {
+      id: Date.now(),
+      chapter_name: "새 챕터",
+      prologue: "",
+      epilogue: "",
+    };
+    const updated = [...chapters];
+    updated.splice(index, 0, newChapter);
+    setChapters(updated);
+  };
 
-    const newChapters = [...chapters]
-    newChapters.splice(index, 0, newChapter)
-    setChapters(newChapters)
-  }
-
-  const handleDeleteClick = (chapterId: string, e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setDeleteChapterId(chapterId)
-    setIsDeleteDialogOpen(true)
-  }
+  const handleDeleteClick = (chapterId: number, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDeleteChapterId(chapterId);
+    setIsDeleteDialogOpen(true);
+  };
 
   const confirmDelete = () => {
-    if (deleteChapterId) {
-      setChapters(chapters.filter((chapter) => chapter.id !== deleteChapterId))
-      setDeleteChapterId(null)
-      setIsDeleteDialogOpen(false)
+    if (deleteChapterId !== null) {
+      setChapters(chapters.filter((c) => c.id !== deleteChapterId));
+      setDeleteChapterId(null);
+      setIsDeleteDialogOpen(false);
     }
-  }
+  };
 
-  const minWidth = Math.max(1200, chapters.length * 300 + 300)
+  const minWidth = Math.max(1200, chapters.length * 300 + 300);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -116,9 +97,11 @@ export default function MemoirTimeline() {
         ) : (
           <>
             <div className="mb-12">
-              <div className="w-full overflow-x-auto pb-8">
-                <div className="relative py-16 px-12 min-w-fit">
-                  <div className="absolute left-12 right-12 top-1/2 h-1 bg-amber-300 transform -translate-y-1/2 z-0" />
+              {/* 스크롤에 좌우 여백 추가 */}
+              <div className="w-full overflow-x-auto pb-8 px-12">
+                <div className="relative py-16 min-w-fit" style={{ minWidth }}>
+                  {/* 가로선 전체 확장 */}
+                  <div className="absolute inset-x-0 top-1/2 h-1 bg-amber-300 transform -translate-y-1/2 z-0" />
 
                   <div className="relative z-10 flex items-center justify-center">
                     <div className="flex items-center justify-center w-16 mr-12">
@@ -131,19 +114,17 @@ export default function MemoirTimeline() {
                       </button>
                     </div>
 
-                    <div className="grid gap-8 justify-center mx-auto"
+                    <div
+                      className="grid gap-8 justify-center mx-auto"
                       style={{
                         display: "inline-grid",
                         gridTemplateColumns: `repeat(${chapters.length * 2 - 1}, 1fr)`,
                         alignItems: "center",
                       }}
                     >
-                      {chapters.map((chapter, index) => (
-                        <>
-                          <div
-                            key={`chapter-${chapter.id}`}
-                            className="relative w-64 flex flex-col items-center justify-center"
-                          >
+                      {chapters.map((chapter, idx) => (
+                        <React.Fragment key={chapter.id}>
+                          <div className="relative w-64 flex flex-col items-center justify-center">
                             <div className="absolute bottom-4 left-4 w-full h-full bg-white rounded-lg shadow-md"></div>
                             <div className="absolute bottom-2 left-2 w-full h-full bg-white rounded-lg shadow-md"></div>
 
@@ -159,42 +140,35 @@ export default function MemoirTimeline() {
 
                                 <div className="h-36 overflow-hidden">
                                   <img
-                                    src={chapter.imageUrl || "/placeholder.svg"}
-                                    alt={chapter.description}
+                                    src="/placeholder.svg"
+                                    alt={chapter.chapter_name}
                                     className="w-full h-full object-cover"
                                   />
                                 </div>
                                 <div className="p-3">
-                                  <div className="flex flex-wrap gap-1 mb-1">
-                                    {chapter.tags.map((tag) => (
-                                      <span
-                                        key={tag}
-                                        className="px-2 py-0.5 bg-amber-100 text-amber-800 text-xs rounded-full"
-                                      >
-                                        {tag}
-                                      </span>
-                                    ))}
-                                  </div>
-                                  <h3 className="font-medium text-amber-900 truncate">{chapter.title}</h3>
-                                  <p className="text-xs text-amber-700 mt-1">{chapter.pageCount}페이지</p>
-                                  <p className="text-xs text-amber-700 mt-1 line-clamp-2">{chapter.description}</p>
+                                  <h3 className="font-medium text-amber-900 truncate">
+                                    {chapter.chapter_name}
+                                  </h3>
+                                  <p className="text-xs text-amber-700 mt-1 line-clamp-2">
+                                    {chapter.prologue}
+                                  </p>
                                 </div>
                               </div>
                             </Link>
                           </div>
 
-                          {index < chapters.length - 1 && (
-                            <div key={`add-${chapter.id}`} className="flex items-center justify-center">
+                          {idx < chapters.length - 1 && (
+                            <div className="flex items-center justify-center">
                               <button
-                                onClick={() => addChapter(index + 1)}
+                                onClick={() => addChapter(idx + 1)}
                                 className="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center hover:bg-amber-500 transition-colors"
-                                aria-label={`Add chapter after ${chapter.title}`}
+                                aria-label={`Add chapter after ${chapter.chapter_name}`}
                               >
                                 <PlusCircle size={16} />
                               </button>
                             </div>
                           )}
-                        </>
+                        </React.Fragment>
                       ))}
                     </div>
 
@@ -240,5 +214,5 @@ export default function MemoirTimeline() {
         </AlertDialogContent>
       </AlertDialog>
     </div>
-  )
+  );
 }
