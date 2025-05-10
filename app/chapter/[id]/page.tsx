@@ -92,11 +92,11 @@ export default function ViewChapter() {
       <main className="flex-1 p-6 bg-gradient-to-b from-rose-50 to-orange-50">
         <div className="max-w-6xl mx-auto mb-8">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-rose-900">{chapterTitle}</h1>
+            <h1 className="mt-8 text-3xl font-bold text-rose-900">{chapterTitle}</h1>
             <Link href="/my-page">
               <Button
                 variant="outline"
-                className="border-rose-600 text-rose-800 hover:bg-orange-100"
+                className="mt-8 border-rose-600 text-rose-800 hover:bg-orange-100"
               >
                 돌아가기
                 <ArrowLeft className="ml" size={16} />
