@@ -10,7 +10,7 @@ export default function Header() {
         </Link>
         <div className="space-x-2">
           <Link href="/signin">
-            <Button className="bg-amber-600 hover:bg-amber-500 text-white">
+            <Button variant="outline" className="text-amber-600 border-amber-50 hover:bg-amber-100">
               로그인
             </Button>
           </Link>
