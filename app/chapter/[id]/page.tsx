@@ -1,10 +1,8 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
+import React, { useState } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { PlusCircle, ArrowLeft, Trash2 } from "lucide-react"
 import Header from "@/components/header"
@@ -28,9 +26,10 @@ interface Page {
   content: string
 }
 
-export default function ViewChapter({ params }: { params: { id: string } }) {
+export default function ViewChapter() {
   const router = useRouter()
-  const chapterId = params.id
+  const params = useParams()
+  const chapterId = params?.id as string
 
   const [chapterTitle] = useState("어린 시절의 추억")
   const [pages, setPages] = useState<Page[]>([
@@ -58,23 +57,19 @@ export default function ViewChapter({ params }: { params: { id: string } }) {
   }
 
   const handleDeleteClick = (pageId: string, e: React.MouseEvent) => {
-    e.preventDefault() // 링크 이동 방지
-    e.stopPropagation() // 이벤트 버블링 방지
+    e.preventDefault()
+    e.stopPropagation()
     setDeletePageId(pageId)
     setIsDeleteDialogOpen(true)
   }
 
   const confirmDelete = () => {
     if (deletePageId) {
-      // 페이지 삭제 로직
       setPages(pages.filter((page) => page.id !== deletePageId))
       setDeletePageId(null)
       setIsDeleteDialogOpen(false)
     }
   }
-
-  // Calculate minimum width with more spacing for cards (match my-page)
-  const minWidth = Math.max(1200, pages.length * 300 + 300)
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -82,20 +77,18 @@ export default function ViewChapter({ params }: { params: { id: string } }) {
       <UserHeader />
 
       <main className="flex-1 p-6 bg-gradient-to-b from-amber-50 to-amber-100">
-        {/* Header section constrained */}
         <div className="max-w-6xl mx-auto mb-8">
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold text-amber-900">{chapterTitle}</h1>
             <Link href="/my-page">
-              <Button variant="outline" className="border-amber-600 text-amber-800 hover:bg-amber-100">
-                <ArrowLeft className="mr-2" size={16} />
+              <Button variant="ghost" className="ml-4">
                 돌아가기
+                <ArrowLeft className="ml-2" size={16} />
               </Button>
             </Link>
           </div>
         </div>
 
-        {/* If no pages, show a central big plus */}
         {pages.length === 0 ? (
           <div className="w-full flex items-center justify-center py-32">
             <button
@@ -107,11 +100,11 @@ export default function ViewChapter({ params }: { params: { id: string } }) {
             </button>
           </div>
         ) : (
-          /* Timeline slider full-width */
           <div className="w-full overflow-x-auto pb-8">
-            <div className="relative py-16 px-12" style={{ minWidth: `${minWidth}px` }}>
+            <div className="relative py-16 px-12 min-w-fit">
               <div className="absolute left-12 right-12 top-1/2 h-1 bg-amber-300 transform -translate-y-1/2 z-0" />
-              <div className="relative z-10 flex items-center">
+
+              <div className="relative z-10 flex items-center justify-center">
                 <div className="flex items-center justify-center w-16 mr-12">
                   <button
                     onClick={() => addPage(0)}
@@ -123,18 +116,18 @@ export default function ViewChapter({ params }: { params: { id: string } }) {
                 </div>
 
                 <div
-                  className="flex-grow grid gap-8"
+                  className="grid gap-8 justify-center mx-auto"
                   style={{
+                    display: "inline-grid",
                     gridTemplateColumns: `repeat(${pages.length * 2 - 1}, 1fr)`,
                     alignItems: "center",
                   }}
                 >
                   {pages.map((page, index) => (
-                    <>
-                      <div key={`page-${page.id}`} className="flex flex-col items-center justify-center">
+                    <React.Fragment key={`pair-${page.id}`}>
+                      <div className="flex flex-col items-center justify-center">
                         <Link href={`/chapter/${chapterId}/edit/${page.id}`} className="w-64 relative group">
                           <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-                            {/* 삭제 버튼 */}
                             <button
                               onClick={(e) => handleDeleteClick(page.id, e)}
                               className="absolute top-2 right-2 w-7 h-7 bg-white/80 hover:bg-red-100 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 text-red-500 hover:text-red-600"
@@ -142,7 +135,6 @@ export default function ViewChapter({ params }: { params: { id: string } }) {
                             >
                               <Trash2 size={14} />
                             </button>
-
                             <div className="h-36 overflow-hidden">
                               <img
                                 src={page.imageUrl || "/placeholder.svg"}
@@ -153,10 +145,7 @@ export default function ViewChapter({ params }: { params: { id: string } }) {
                             <div className="p-3">
                               <div className="flex flex-wrap gap-1 mb-1">
                                 {page.tags.map((tag) => (
-                                  <span
-                                    key={tag}
-                                    className="px-2 py-0.5 bg-amber-100 text-amber-800 text-xs rounded-full"
-                                  >
+                                  <span key={tag} className="px-2 py-0.5 bg-amber-100 text-amber-800 text-xs rounded-full">
                                     {tag}
                                   </span>
                                 ))}
@@ -179,7 +168,7 @@ export default function ViewChapter({ params }: { params: { id: string } }) {
                           </button>
                         </div>
                       )}
-                    </>
+                    </React.Fragment>
                   ))}
                 </div>
 
@@ -198,7 +187,6 @@ export default function ViewChapter({ params }: { params: { id: string } }) {
         )}
       </main>
 
-      {/* 삭제 확인 대화상자 */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
