@@ -1,20 +1,35 @@
 "use client"
 
+import type React from "react"
+
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Card } from "@/components/ui/card"
-import { RefreshCw, Edit, Save, X } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent } from "@/components/ui/card"
+import { RefreshCw, Edit, Save, X, Plus, Trash2 } from "lucide-react"
 import Header from "@/components/header"
 import UserHeader from "@/components/user-header"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 export default function EditPage({ params }: { params: { id: string; pageId: string } }) {
   const router = useRouter()
   const { id: chapterId, pageId } = params
 
   const [isEditing, setIsEditing] = useState(false)
+  const [isEditingMetadata, setIsEditingMetadata] = useState(false)
   const [isRegenerating, setIsRegenerating] = useState(false)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [page, setPage] = useState({
     id: pageId,
     imageUrl: "/childhood-playground.png",
@@ -32,6 +47,9 @@ export default function EditPage({ params }: { params: { id: string; pageId: str
   })
 
   const [editedContent, setEditedContent] = useState(page.content)
+  const [editedTags, setEditedTags] = useState<string[]>([...page.tags])
+  const [editedDescription, setEditedDescription] = useState(page.description)
+  const [newTag, setNewTag] = useState("")
 
   const handleRegenerate = () => {
     setIsRegenerating(true)
@@ -59,6 +77,10 @@ export default function EditPage({ params }: { params: { id: string; pageId: str
     setIsEditing(true)
   }
 
+  const handleEditMetadata = () => {
+    setIsEditingMetadata(true)
+  }
+
   const handleSave = () => {
     setPage({
       ...page,
@@ -67,13 +89,56 @@ export default function EditPage({ params }: { params: { id: string; pageId: str
     setIsEditing(false)
   }
 
+  const handleSaveMetadata = () => {
+    setPage({
+      ...page,
+      tags: editedTags,
+      description: editedDescription,
+    })
+    setIsEditingMetadata(false)
+  }
+
   const handleCancel = () => {
     setEditedContent(page.content)
     setIsEditing(false)
   }
 
+  const handleCancelMetadata = () => {
+    setEditedTags([...page.tags])
+    setEditedDescription(page.description)
+    setIsEditingMetadata(false)
+  }
+
   const handleFinish = () => {
     router.push(`/chapter/${chapterId}`)
+  }
+
+  const handleDelete = () => {
+    setIsDeleteDialogOpen(true)
+  }
+
+  const confirmDelete = () => {
+    // 실제로는 API 호출하여 페이지 삭제
+    console.log(`페이지 삭제: ${pageId}`)
+    router.push(`/chapter/${chapterId}`)
+  }
+
+  const addTag = () => {
+    if (newTag.trim() && !editedTags.includes(newTag.trim())) {
+      setEditedTags([...editedTags, newTag.trim()])
+      setNewTag("")
+    }
+  }
+
+  const removeTag = (tagToRemove: string) => {
+    setEditedTags(editedTags.filter((tag) => tag !== tagToRemove))
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault()
+      addTag()
+    }
   }
 
   return (
@@ -99,7 +164,7 @@ export default function EditPage({ params }: { params: { id: string; pageId: str
               {!isEditing ? (
                 <Button onClick={handleEdit} className="bg-amber-600 hover:bg-amber-500 flex items-center">
                   <Edit size={16} className="mr-2" />
-                  편집
+                  텍스트 편집
                 </Button>
               ) : (
                 <>
@@ -124,16 +189,85 @@ export default function EditPage({ params }: { params: { id: string; pageId: str
                   alt={page.description}
                   className="w-full h-48 object-cover"
                 />
-                <div className="p-4">
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    {page.tags.map((tag) => (
-                      <span key={tag} className="px-2 py-1 bg-amber-100 text-amber-800 text-xs rounded-full">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  <p className="text-amber-900 font-medium">{page.description}</p>
-                </div>
+                <CardContent className="p-4">
+                  {!isEditingMetadata ? (
+                    <>
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {page.tags.map((tag) => (
+                          <span key={tag} className="px-2 py-1 bg-amber-100 text-amber-800 text-xs rounded-full">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                      <p className="text-amber-900 font-medium">{page.description}</p>
+                      <Button
+                        onClick={handleEditMetadata}
+                        variant="ghost"
+                        className="mt-2 text-amber-600 hover:text-amber-800 hover:bg-amber-50 p-0 h-auto"
+                      >
+                        <Edit size={14} className="mr-1" />
+                        태그 및 설명 편집
+                      </Button>
+                    </>
+                  ) : (
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium text-amber-700 mb-1">태그</label>
+                        <div className="flex mb-2">
+                          <Input
+                            value={newTag}
+                            onChange={(e) => setNewTag(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            placeholder="새 태그 추가"
+                            className="flex-1 text-sm"
+                          />
+                          <Button type="button" onClick={addTag} className="ml-2 bg-amber-600 hover:bg-amber-500 h-9">
+                            <Plus size={14} />
+                          </Button>
+                        </div>
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          {editedTags.map((tag) => (
+                            <div
+                              key={tag}
+                              className="flex items-center bg-amber-100 text-amber-800 px-2 py-1 rounded-full text-xs"
+                            >
+                              <span>{tag}</span>
+                              <button
+                                type="button"
+                                onClick={() => removeTag(tag)}
+                                className="ml-1 text-amber-600 hover:text-amber-800"
+                              >
+                                <X size={12} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-amber-700 mb-1">설명</label>
+                        <Textarea
+                          value={editedDescription}
+                          onChange={(e) => setEditedDescription(e.target.value)}
+                          className="text-sm"
+                          rows={3}
+                        />
+                      </div>
+
+                      <div className="flex space-x-2 pt-2">
+                        <Button variant="outline" onClick={handleCancelMetadata} className="flex-1 text-xs h-8">
+                          취소
+                        </Button>
+                        <Button
+                          onClick={handleSaveMetadata}
+                          className="flex-1 bg-amber-600 hover:bg-amber-500 text-xs h-8"
+                        >
+                          저장
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
               </Card>
             </div>
 
@@ -154,16 +288,44 @@ export default function EditPage({ params }: { params: { id: string; pageId: str
             </div>
           </div>
 
-          <div className="flex justify-center space-x-4 mt-8">
-            <Button variant="outline" onClick={() => router.push(`/chapter/${chapterId}`)} className="px-8">
-              취소
+          <div className="flex justify-between mt-8">
+            <Button
+              variant="outline"
+              onClick={handleDelete}
+              className="px-4 text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 hover:border-red-300"
+            >
+              <Trash2 size={16} className="mr-2" />
+              페이지 삭제
             </Button>
-            <Button onClick={handleFinish} className="bg-amber-800 hover:bg-amber-700 px-8">
-              완료
-            </Button>
+
+            <div className="flex space-x-4">
+              <Button variant="outline" onClick={() => router.push(`/chapter/${chapterId}`)} className="px-8">
+                취소
+              </Button>
+              <Button onClick={handleFinish} className="bg-amber-800 hover:bg-amber-700 px-8">
+                완료
+              </Button>
+            </div>
           </div>
         </div>
       </main>
+
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>페이지 삭제</AlertDialogTitle>
+            <AlertDialogDescription>
+              이 페이지를 정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>취소</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+              삭제
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

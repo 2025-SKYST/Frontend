@@ -1,6 +1,6 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { UserCircle } from "lucide-react"
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { UserCircle } from "lucide-react";
 
 export default function UserHeader() {
   return (
@@ -11,11 +11,11 @@ export default function UserHeader() {
           <span className="font-medium">홍길동님</span>
         </div>
         <Link href="/edit-profile">
-          <Button variant="outline" className="text-amber-50 border-amber-50 hover:bg-amber-600">
+          <Button className="bg-amber-600 hover:bg-amber-500 text-white">
             개인정보 수정
           </Button>
         </Link>
       </div>
     </div>
-  )
+  );
 }
