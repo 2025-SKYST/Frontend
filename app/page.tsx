@@ -17,13 +17,24 @@ export default function Home() {
 
   const handleClick = () => setIsOpen(true);
 
-  // 문만 회전 (힌지 위치 보정)
+  // 문 회전 애니메이션
   const doorVariants = {
     closed: { rotateY: 0 },
     open:   { rotateY: -90, transition: { duration: 1, ease: 'easeInOut' } }
   };
 
-  // 문 다 열린 뒤 풀스크린 화이트아웃
+  // 흰색 패널 주변 glow 애니메이션
+  const glowVariants = {
+    hidden:  {
+      boxShadow: '0px 0px 0px 0px rgba(255,255,255,0)'
+    },
+    visible: {
+      boxShadow: '0px 0px 40px 20px rgba(255,255,255,0.6)',
+      transition: { delay: 0.3, duration: 0.8, ease: 'easeOut' }
+    }
+  };
+
+  // 전체 화면 화이트아웃
   const overlayVariants = {
     hidden:  { opacity: 0 },
     visible: { opacity: 1, transition: { delay: 1.1, duration: 0.7, ease: 'easeInOut' } }
@@ -42,9 +53,7 @@ export default function Home() {
           backgroundPosition: 'center 40%',
         }}
       >
-        {/* ────────────────────────────────────
-            1) 문 위치 고정 Wrapper (translate)
-        ──────────────────────────────────── */}
+        {/* 1) 문 위치 고정 Wrapper */}
         <div
           onClick={handleClick}
           className="cursor-pointer"
@@ -57,10 +66,11 @@ export default function Home() {
             height: '360px',
           }}
         >
-          {/* ────────────────────────────────────
-              2) 흰색 패널 (건드리지 말아달라 하셔서 그대로)
-          ──────────────────────────────────── */}
-          <div
+          {/* 2) glow 효과가 적용된 흰색 패널 */}
+          <motion.div
+            variants={glowVariants}
+            initial="hidden"
+            animate={isOpen ? 'visible' : 'hidden'}
             style={{
               position: 'absolute',
               top: 24,
@@ -69,12 +79,11 @@ export default function Home() {
               height: '87%',
               backgroundColor: 'white',
               zIndex: 0,
+              borderRadius: '2px',      // 살짝 둥글려도 예쁩니다
             }}
           />
 
-          {/* ────────────────────────────────────
-              3) motion.div: 회전만 담당, 힌지 보정
-          ──────────────────────────────────── */}
+          {/* 3) 문 회전 Motion */}
           <motion.div
             variants={doorVariants}
             initial="closed"
@@ -83,7 +92,8 @@ export default function Home() {
               width: '100%',
               height: '100%',
               transformStyle: 'preserve-3d',
-              transformOrigin: '40px 50%',   // ← 힌지 위치 보정
+              transformOrigin: '40px 50%',
+              zIndex: 1,
             }}
           >
             <div
@@ -94,15 +104,12 @@ export default function Home() {
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backfaceVisibility: 'hidden',
-                zIndex: 1,
               }}
             />
           </motion.div>
         </div>
 
-        {/* ────────────────────────────────────
-            4) 전체 배경 오버레이 (문 다 열리고 난 뒤)
-        ──────────────────────────────────── */}
+        {/* 4) 문 다 열리고 나서 전체 화면 화이트아웃 */}
         <AnimatePresence>
           {isOpen && (
             <motion.div
