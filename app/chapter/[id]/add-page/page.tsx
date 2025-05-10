@@ -11,7 +11,6 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { X, Plus, Sparkles } from "lucide-react"
 import Header from "@/components/header"
-import UserHeader from "@/components/user-header"
 
 export default function AddPage({ params }: { params: { id: string } }) {
   const router = useRouter()
@@ -95,7 +94,6 @@ export default function AddPage({ params }: { params: { id: string } }) {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <UserHeader />
 
       <main className="flex-1 p-6 bg-gradient-to-b from-rose-50 to-orange-50">
         <div className="max-w-3xl mx-auto">
