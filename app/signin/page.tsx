@@ -37,7 +37,7 @@ export default function SignIn() {
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle className="text-2xl text-center">로그인</CardTitle>
-            <CardDescription className="text-center">회고록 서비스에 로그인하세요</CardDescription>
+            <CardDescription className="text-center">나의 회고록 서비스에 로그인하세요.</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -50,7 +50,7 @@ export default function SignIn() {
                   required
                   value={formData.id}
                   onChange={handleChange}
-                  placeholder="아이디를 입력하세요"
+                  placeholder="아이디를 입력해 주세요."
                 />
               </div>
               <div className="space-y-2">
@@ -62,7 +62,7 @@ export default function SignIn() {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="비밀번호를 입력하세요"
+                  placeholder="비밀번호를 입력해 주세요."
                 />
               </div>
               <Button type="submit" className="w-full bg-amber-600 hover:bg-amber-500">
