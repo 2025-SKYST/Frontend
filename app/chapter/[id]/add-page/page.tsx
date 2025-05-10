@@ -1,149 +1,122 @@
-"use client"
+"use client";
 
-import type React from "react"
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { X, Plus } from "lucide-react";
+import Header from "@/components/header";
+// import UserHeader from "@/components/user-header";
+import { useAuth } from "@/hooks/useAuth";
+import { createImage } from "@/lib/imageService";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { X, Plus, Sparkles } from "lucide-react"
-import Header from "@/components/header"
+export default function AddImage({ params }: { params: { id: string } }) {
+  const router = useRouter();
+  const chapterId = params.id;
+  const { getAuthHeader } = useAuth();
 
-export default function AddPage({ params }: { params: { id: string } }) {
-  const router = useRouter()
-  const chapterId = params.id
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [tags, setTags] = useState<string[]>([]);
+  const [currentTag, setCurrentTag] = useState("");
+  const [description, setDescription] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [imagePreview, setImagePreview] = useState<string | null>(null)
-  const [tags, setTags] = useState<string[]>([])
-  const [currentTag, setCurrentTag] = useState("")
-  const [description, setDescription] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [isGeneratingMetadata, setIsGeneratingMetadata] = useState(false)
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0]
-      setImagePreview(URL.createObjectURL(file))
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) {
+      const f = e.target.files[0];
+      setFile(f);
+      setPreview(URL.createObjectURL(f));
     }
-  }
+  };
 
   const addTag = () => {
-    if (currentTag.trim() && !tags.includes(currentTag.trim())) {
-      setTags([...tags, currentTag.trim()])
-      setCurrentTag("")
+    const t = currentTag.trim();
+    if (t && !tags.includes(t)) {
+      setTags([...tags, t]);
+      setCurrentTag("");
     }
-  }
+  };
 
-  const removeTag = (tagToRemove: string) => {
-    setTags(tags.filter((tag) => tag !== tagToRemove))
-  }
+  const removeTag = (t: string) => setTags(tags.filter((tag) => tag !== t));
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
-      e.preventDefault()
-      addTag()
+      e.preventDefault();
+      addTag();
     }
-  }
-
-  const generateMetadata = async () => {
-    if (!imagePreview) return
-
-    setIsGeneratingMetadata(true)
-
-    // 실제로는 API 호출하여 태그와 설명 생성
-    // 여기서는 예시로 타임아웃 사용
-    setTimeout(() => {
-      setTags(["자동생성", "AI", "추억"])
-      setDescription("AI가 자동으로 생성한 이미지 설명입니다.")
-      setIsGeneratingMetadata(false)
-    }, 1500)
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-
-    // 태그나 설명이 없는 경우 자동 생성
-    let finalTags = tags
-    let finalDescription = description
-
-    if (tags.length === 0 || !description) {
-      // 실제로는 API 호출하여 태그와 설명 생성
-      if (tags.length === 0) {
-        finalTags = ["자동생성", "AI", "추억"]
-      }
-
-      if (!description) {
-        finalDescription = "AI가 자동으로 생성한 이미지 설명입니다."
-      }
+    e.preventDefault();
+    if (!file) return;
+    setIsLoading(true);
+    try {
+      const header = getAuthHeader();
+      // keyword: comma-separated tags, query: description
+      const img = await createImage(
+        chapterId,
+        file,
+        description || null,
+        tags.length ? tags.join(",") : null,
+        header
+      );
+      router.push(`/chapter/${chapterId}`);
+    } catch (err) {
+      console.error("이미지 업로드 실패:", err);
+      alert("이미지 업로드 중 오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
     }
-
-    // 여기에 AI 텍스트 생성 로직 추가
-    // 실제로는 API 호출을 통해 텍스트를 생성
-
-    setTimeout(() => {
-      setIsLoading(false)
-      // 생성된 페이지 ID로 이동
-      router.push(`/chapter/${chapterId}/edit/new-page-id`)
-    }, 2000)
-  }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
 
       <main className="flex-1 p-6 bg-gradient-to-b from-rose-50 to-orange-50">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-md mx-auto">
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl text-center text-rose-900">새 페이지 추가</CardTitle>
+              <CardTitle className="text-2xl text-center text-rose-900">
+                새 이미지 추가
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="image" className="text-rose-800">
-                    이미지 업로드 (필수)
+                  <Label htmlFor="file" className="text-rose-800">
+                    이미지 파일 (필수)
                   </Label>
                   <Input
-                    id="image"
+                    id="file"
                     type="file"
                     accept="image/*"
-                    onChange={handleImageChange}
+                    onChange={handleFileChange}
                     required
                     className="border-orange-200 focus-visible:ring-rose-500"
                   />
-
-                  {imagePreview && (
-                    <div className="mt-4 relative">
-                      <img
-                        src={imagePreview || "/placeholder.svg"}
-                        alt="이미지 미리보기"
-                        className="w-full h-64 object-contain border border-orange-200 rounded-md"
-                      />
-                    </div>
+                  {preview && (
+                    <img
+                      src={preview}
+                      alt="미리보기"
+                      className="w-full h-48 object-contain border border-orange-200 rounded-md mt-2"
+                    />
                   )}
                 </div>
 
-                {imagePreview && (
-                  <div className="flex justify-end">
-                    <Button
-                      type="button"
-                      onClick={generateMetadata}
-                      disabled={isGeneratingMetadata || !imagePreview}
-                      className="flex items-center text-sm bg-rose-600 hover:bg-rose-500"
-                    >
-                      <Sparkles size={16} className={`mr-2 ${isGeneratingMetadata ? "animate-pulse" : ""}`} />
-                      {isGeneratingMetadata ? "생성 중..." : "태그 및 설명 자동 생성"}
-                    </Button>
-                  </div>
-                )}
-
                 <div className="space-y-2">
                   <Label htmlFor="tags" className="text-rose-800">
-                    태그 (선택사항)
+                    태그 (선택)
                   </Label>
                   <div className="flex">
                     <Input
@@ -151,27 +124,33 @@ export default function AddPage({ params }: { params: { id: string } }) {
                       value={currentTag}
                       onChange={(e) => setCurrentTag(e.target.value)}
                       onKeyDown={handleKeyDown}
-                      placeholder="태그를 입력하고 Enter 또는 추가 버튼을 누르세요"
+                      placeholder="Enter로 추가"
                       className="flex-1 border-orange-200 focus-visible:ring-rose-500"
                     />
-                    <Button type="button" onClick={addTag} className="ml-2 bg-rose-600 hover:bg-rose-500">
+                    <Button
+                      type="button"
+                      onClick={addTag}
+                      className="ml-2 bg-rose-600 hover:bg-rose-500"
+                    >
                       <Plus size={16} />
                     </Button>
                   </div>
-
                   {tags.length > 0 && (
                     <div className="flex flex-wrap gap-2 mt-2">
-                      {tags.map((tag) => (
-                        <div key={tag} className="flex items-center bg-orange-100 text-rose-700 px-3 py-1 rounded-full">
-                          <span>{tag}</span>
+                      {tags.map((t) => (
+                        <span
+                          key={t}
+                          className="flex items-center bg-orange-100 text-rose-700 px-3 py-1 rounded-full"
+                        >
+                          {t}
                           <button
                             type="button"
-                            onClick={() => removeTag(tag)}
+                            onClick={() => removeTag(t)}
                             className="ml-2 text-rose-600 hover:text-rose-800"
                           >
                             <X size={14} />
                           </button>
-                        </div>
+                        </span>
                       ))}
                     </div>
                   )}
@@ -179,13 +158,13 @@ export default function AddPage({ params }: { params: { id: string } }) {
 
                 <div className="space-y-2">
                   <Label htmlFor="description" className="text-rose-800">
-                    간단한 설명 (선택사항)
+                    설명 (선택)
                   </Label>
                   <Textarea
                     id="description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    placeholder="이 페이지에 대한 간단한 설명을 입력하세요"
+                    placeholder="설명을 입력하세요"
                     className="border-orange-200 focus-visible:ring-rose-500"
                   />
                 </div>
@@ -203,9 +182,9 @@ export default function AddPage({ params }: { params: { id: string } }) {
                     <Button
                       type="submit"
                       className="flex-1 bg-rose-600 hover:bg-rose-500"
-                      disabled={isLoading || !imagePreview}
+                      disabled={isLoading || !file}
                     >
-                      {isLoading ? "생성 중..." : "AI로 회고록 생성하기"}
+                      {isLoading ? "업로드 중..." : "이미지 추가"}
                     </Button>
                   </div>
                 </CardFooter>
@@ -215,5 +194,5 @@ export default function AddPage({ params }: { params: { id: string } }) {
         </div>
       </main>
     </div>
-  )
+  );
 }
