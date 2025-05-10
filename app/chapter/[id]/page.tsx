@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Page {
   id: string;
@@ -30,6 +31,7 @@ export default function ViewChapter() {
   const router = useRouter();
   const params = useParams();
   const chapterId = params?.id as string;
+  const { getAuthHeader } = useAuth();
 
   const [chapterTitle] = useState("어린 시절의 추억");
   const [pages, setPages] = useState<Page[]>([
@@ -53,6 +55,16 @@ export default function ViewChapter() {
 
   const [deletePageId, setDeletePageId] = useState<string | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  useEffect(() => {
+    const header = getAuthHeader();
+    // if there's no auth header (no token), kick to login
+    if (!header || Object.keys(header).length === 0) {
+      // replace so user can’t click “back” into this page
+      router.replace("/signin");
+      return;
+    }
+  }, [getAuthHeader]);
 
   const addPage = (index: number) => {
     router.push(`/chapter/${chapterId}/add-page`);
@@ -80,9 +92,7 @@ export default function ViewChapter() {
       <main className="flex-1 p-6 bg-gradient-to-b from-rose-50 to-orange-50">
         <div className="max-w-6xl mx-auto mb-8">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-rose-900">
-              {chapterTitle}
-            </h1>
+            <h1 className="text-3xl font-bold text-rose-900">{chapterTitle}</h1>
             <Link href="/my-page">
               <Button variant="ghost" className="ml-4">
                 돌아가기
@@ -141,14 +151,18 @@ export default function ViewChapter() {
                             >
                               <Trash2 size={14} />
                             </button>
-                            <div className="h-48 overflow-hidden"> {/* ← 이미지 크기 확대 */}
+                            <div className="h-48 overflow-hidden">
+                              {" "}
+                              {/* ← 이미지 크기 확대 */}
                               <img
                                 src={page.imageUrl || "/placeholder.svg"}
                                 alt={page.description}
                                 className="w-full h-full object-cover"
                               />
                             </div>
-                            <div className="p-5"> {/* ← 여백 확대 */}
+                            <div className="p-5">
+                              {" "}
+                              {/* ← 여백 확대 */}
                               <div className="flex flex-wrap gap-1 mb-1">
                                 {page.tags.map((tag) => (
                                   <span
@@ -187,7 +201,6 @@ export default function ViewChapter() {
                     </React.Fragment>
                   ))}
                 </div>
-
 
                 <div className="flex items-center justify-center w-16 ml-12">
                   <button

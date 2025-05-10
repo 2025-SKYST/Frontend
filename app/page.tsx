@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 //import Header from '@/components/header';
 
+import { useAuth } from "@/hooks/useAuth";
+
 export default function Home() {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
@@ -21,12 +23,15 @@ export default function Home() {
     <React.Fragment key="text4">잊혀진 기억들이 아름다운 이야기로 다시 태어납니다.</React.Fragment>,
   ]
 
+  const {isAuthenticated} = useAuth();
+
   useEffect(() => {
     if (isOpen) {
-      const timer = setTimeout(() => router.push("/signin"), 2600)
+      const url = isAuthenticated ? "/my-page" : "/signin"
+      const timer = setTimeout(() => router.push(url), 2600)
       return () => clearTimeout(timer)
     }
-  }, [isOpen, router])
+  }, [isOpen, router, isAuthenticated])
 
   // 텍스트 애니메이션을 위한 타이머
   useEffect(() => {

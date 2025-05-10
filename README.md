@@ -72,14 +72,4 @@ AI를 활용하여 개인 회고록을 작성하고 관리할 수 있는 웹 서
 - **라우팅**: Next.js App Router
 - **이미지 처리**: Next.js Image 컴포넌트
 
-## 설치 방법
-
-1. 저장소 클론
-
-```bash
-git clone https://github.com/yourusername/ai-memoir-service.git
-cd ai-memoir-service
-```
-
-
 
