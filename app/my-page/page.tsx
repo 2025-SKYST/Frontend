@@ -36,6 +36,14 @@ export default function MemoirTimeline() {
 
   // API에서 챕터 목록 fetch
   useEffect(() => {
+    const header = getAuthHeader();
+    // if there's no auth header (no token), kick to login
+    if (!header || Object.keys(header).length === 0) {
+      // replace so user can’t click “back” into this page
+      router.replace("/signin");
+      return;
+    }
+
     (async () => {
       try {
         const res = await getChapters(getAuthHeader());
