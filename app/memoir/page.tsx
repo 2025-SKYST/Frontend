@@ -112,8 +112,8 @@ export default function Memoir() {
       <Header />
       <UserHeader />
 
-      <main className="flex-1 p-6 bg-gradient-to-b from-amber-50 to-amber-100 flex flex-col items-center">
-        <div className="max-w-6xl w-full mx-auto mb-6 flex justify-between items-center">
+      <main className="flex-1 p-4 bg-gradient-to-b from-amber-50 to-amber-100 flex flex-col items-center">
+        <div className="w-full max-w-7xl mx-auto mb-4 flex justify-between items-center">
           <Button
             onClick={() => router.push("/my-page")}
             variant="outline"
@@ -126,85 +126,84 @@ export default function Memoir() {
           <div className="w-[100px]"></div> {/* 균형을 위한 빈 공간 */}
         </div>
 
-        <div className="relative w-full max-w-5xl">
-          {/* 책 표지 및 페이지 */}
-          <div ref={bookRef} className={`book ${isFlipping ? `flipping ${flipDirection}` : ""}`}>
-            {/* 책 바인딩 */}
-            <div className="book-binding"></div>
+        <div className="book-outer-wrapper">
+          <div className="book-wrapper">
+            {/* 책 이미지 배경 */}
+            <div ref={bookRef} className={`book-container ${isFlipping ? `flipping ${flipDirection}` : ""}`}>
+              <div className="book-background">
+                <img src="/book-template.png" alt="Book template" className="book-image" />
 
-            {/* 왼쪽 페이지 */}
-            <div className="book-page book-page-left">
-              {leftPage && (
-                <div className="book-content">
-                  <div className="page-header">
-                    <h2 className="text-xl font-semibold text-amber-800">{leftPage.chapterTitle}</h2>
-                    <p className="text-sm text-amber-600">{leftPage.description}</p>
+                {/* 왼쪽 페이지 콘텐츠 */}
+                {leftPage && (
+                  <div className="left-page-content">
+                    <div className="page-header">
+                      <h2 className="text-xl font-semibold text-amber-900">{leftPage.chapterTitle}</h2>
+                      <p className="text-sm text-amber-700">{leftPage.description}</p>
+                    </div>
+
+                    <div className="page-image-container">
+                      <img
+                        src={leftPage.imageUrl || "/placeholder.svg"}
+                        alt={leftPage.description}
+                        className="page-image"
+                      />
+                    </div>
+
+                    <div className="page-content">{leftPage.content}</div>
+
+                    <div className="page-number">{visiblePages[0] + 1}</div>
                   </div>
+                )}
 
-                  <div className="page-image-container">
-                    <img
-                      src={leftPage.imageUrl || "/placeholder.svg"}
-                      alt={leftPage.description}
-                      className="page-image"
-                    />
+                {/* 오른쪽 페이지 콘텐츠 */}
+                {rightPage && (
+                  <div className="right-page-content">
+                    <div className="page-header">
+                      <h2 className="text-xl font-semibold text-amber-900">{rightPage.chapterTitle}</h2>
+                      <p className="text-sm text-amber-700">{rightPage.description}</p>
+                    </div>
+
+                    <div className="page-image-container">
+                      <img
+                        src={rightPage.imageUrl || "/placeholder.svg"}
+                        alt={rightPage.description}
+                        className="page-image"
+                      />
+                    </div>
+
+                    <div className="page-content">{rightPage.content}</div>
+
+                    <div className="page-number">{visiblePages[1] + 1}</div>
                   </div>
+                )}
 
-                  <div className="page-content">{leftPage.content}</div>
-
-                  <div className="page-number">{visiblePages[0] + 1}</div>
-                </div>
-              )}
+                {/* 페이지 넘김 효과를 위한 요소 */}
+                <div className="page-flip-effect"></div>
+              </div>
             </div>
 
-            {/* 오른쪽 페이지 */}
-            <div className="book-page book-page-right">
-              {rightPage && (
-                <div className="book-content">
-                  <div className="page-header">
-                    <h2 className="text-xl font-semibold text-amber-800">{rightPage.chapterTitle}</h2>
-                    <p className="text-sm text-amber-600">{rightPage.description}</p>
-                  </div>
+            {/* 페이지 넘김 버튼 */}
+            <div className="navigation-buttons">
+              <Button
+                onClick={goToPreviousPage}
+                disabled={currentPageIndex === 0 || isFlipping}
+                className="nav-button prev-button"
+                variant="ghost"
+                size="icon"
+              >
+                <ChevronLeft size={24} />
+              </Button>
 
-                  <div className="page-image-container">
-                    <img
-                      src={rightPage.imageUrl || "/placeholder.svg"}
-                      alt={rightPage.description}
-                      className="page-image"
-                    />
-                  </div>
-
-                  <div className="page-content">{rightPage.content}</div>
-
-                  <div className="page-number">{visiblePages[1] + 1}</div>
-                </div>
-              )}
+              <Button
+                onClick={goToNextPage}
+                disabled={currentPageIndex >= pages.length - 2 || isFlipping}
+                className="nav-button next-button"
+                variant="ghost"
+                size="icon"
+              >
+                <ChevronRight size={24} />
+              </Button>
             </div>
-
-            {/* 페이지 넘김 효과를 위한 요소 */}
-            <div className="book-page-flip"></div>
-          </div>
-
-          {/* 페이지 넘김 버튼 */}
-          <div className="navigation-buttons">
-            <Button
-              onClick={goToPreviousPage}
-              disabled={currentPageIndex === 0 || isFlipping}
-              className="nav-button prev-button"
-              variant="ghost"
-              size="icon"
-            >
-              <ChevronLeft size={24} />
-            </Button>
-
-            <Button
-              onClick={goToNextPage}
-              disabled={currentPageIndex >= pages.length - 2 || isFlipping}
-              className="nav-button next-button"
-              variant="ghost"
-              size="icon"
-            >
-              <ChevronRight size={24} />
-            </Button>
           </div>
         </div>
 
@@ -216,127 +215,98 @@ export default function Memoir() {
       </main>
 
       <style jsx global>{`
-        /* 책 스타일 */
-        .book {
+        /* 책 외부 래퍼 스타일 */
+        .book-outer-wrapper {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 0;
+        }
+        
+        /* 책 래퍼 스타일 */
+        .book-wrapper {
           position: relative;
           width: 100%;
-          height: 70vh;
-          max-height: 800px;
+          max-width: 1400px;
+          height: 95vh;
+          max-height: 1200px;
           display: flex;
-          perspective: 1500px;
+          justify-content: center;
+          align-items: center;
           margin: 0 auto;
-          transition: transform 0.5s;
         }
         
-        .book-open {
-          transform: translateZ(0px);
-        }
-        
-        .book-binding {
-          position: absolute;
-          width: 30px;
-          height: 100%;
-          background: linear-gradient(to right, #8B4513, #A0522D, #8B4513);
-          left: 50%;
-          transform: translateX(-50%);
-          z-index: 1;
-          border-radius: 3px;
-          box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
-        }
-        
-        .book-page {
+        /* 책 컨테이너 스타일 */
+        .book-container {
           position: relative;
-          width: calc(50% - 15px);
+          width: 100%;
           height: 100%;
-          background-color: #FFF8E1;
-          box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          perspective: 1500px;
           transition: transform 0.5s;
-          transform-origin: center;
-          overflow: hidden;
-          padding: 30px;
-          box-sizing: border-box;
+        }
+        
+        .book-background {
+          position: relative;
+          width: 100%;
+          height: 100%;
           display: flex;
-          flex-direction: column;
+          justify-content: center;
+          align-items: center;
         }
         
-        .book-page-left {
-          left: 0;
-          border-radius: 10px 0 0 10px;
-          box-shadow: inset 5px 0 10px rgba(0, 0, 0, 0.1);
-          background-image: linear-gradient(to right, #FFF8E1 95%, #E6D9B8);
+        .book-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
         }
         
-        .book-page-right {
-          right: 0;
-          border-radius: 0 10px 10px 0;
-          box-shadow: inset -5px 0 10px rgba(0, 0, 0, 0.1);
-          background-image: linear-gradient(to left, #FFF8E1 95%, #E6D9B8);
-        }
-        
-        /* 페이지 넘김 효과 */
-        .book-page-flip {
+        /* 페이지 콘텐츠 스타일 */
+        .left-page-content,
+        .right-page-content {
           position: absolute;
-          width: calc(50% - 15px);
-          height: 100%;
-          top: 0;
-          right: 0;
-          background-color: #FFF8E1;
-          transform-origin: left center;
-          transform: rotateY(0deg);
-          transition: transform 0.5s ease-in-out;
-          backface-visibility: hidden;
-          border-radius: 0 10px 10px 0;
-          box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+          width: 38%;
+          height: 72%;
+          top: 14%;
           z-index: 2;
-          opacity: 0;
-          background-image: linear-gradient(to left, #FFF8E1 95%, #E6D9B8);
-        }
-        
-        .flipping.next .book-page-flip {
-          opacity: 1;
-          transform: rotateY(-180deg);
-          right: 0;
-          left: auto;
-        }
-        
-        .flipping.prev .book-page-flip {
-          opacity: 1;
-          transform: rotateY(180deg);
-          right: auto;
-          left: 0;
-          transform-origin: right center;
-          border-radius: 10px 0 0 10px;
-          background-image: linear-gradient(to right, #FFF8E1 95%, #E6D9B8);
-        }
-        
-        /* 페이지 내용 스타일 */
-        .book-content {
-          height: 100%;
+          overflow-y: auto;
+          padding: 30px;
           display: flex;
           flex-direction: column;
-          overflow-y: auto;
-          padding-right: 10px;
           scrollbar-width: thin;
-          scrollbar-color: #D4A76A transparent;
+          scrollbar-color: rgba(139, 69, 19, 0.3) transparent;
         }
         
-        .book-content::-webkit-scrollbar {
-          width: 6px;
+        .left-page-content::-webkit-scrollbar,
+        .right-page-content::-webkit-scrollbar {
+          width: 4px;
         }
         
-        .book-content::-webkit-scrollbar-thumb {
-          background-color: #D4A76A;
-          border-radius: 3px;
+        .left-page-content::-webkit-scrollbar-thumb,
+        .right-page-content::-webkit-scrollbar-thumb {
+          background-color: rgba(139, 69, 19, 0.3);
+          border-radius: 2px;
+        }
+        
+        .left-page-content {
+          left: 11.5%;
+        }
+        
+        .right-page-content {
+          right: 11.5%;
         }
         
         .page-header {
-          margin-bottom: 15px;
+          margin-bottom: 20px;
           padding-bottom: 10px;
-          border-bottom: 1px solid #E6D9B8;
+          border-bottom: 1px solid rgba(139, 69, 19, 0.2);
         }
         
         .page-image-container {
-          margin-bottom: 15px;
+          margin-bottom: 20px;
           display: flex;
           justify-content: center;
         }
@@ -346,13 +316,13 @@ export default function Memoir() {
           max-height: 200px;
           object-fit: contain;
           border-radius: 5px;
-          box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         
         .page-content {
           flex: 1;
           font-family: serif;
-          font-size: 0.95rem;
+          font-size: 1rem;
           line-height: 1.6;
           color: #5D4037;
           white-space: pre-line;
@@ -361,16 +331,46 @@ export default function Memoir() {
         
         .page-number {
           align-self: center;
-          font-size: 0.8rem;
+          font-size: 0.9rem;
           color: #8B4513;
-          margin-top: 15px;
+          margin-top: 20px;
           font-style: italic;
+        }
+        
+        /* 페이지 넘김 효과 */
+        .page-flip-effect {
+          position: absolute;
+          width: 38%;
+          height: 72%;
+          top: 14%;
+          right: 11.5%;
+          background-color: rgba(255, 255, 255, 0.9);
+          transform-origin: left center;
+          transform: rotateY(0deg);
+          transition: transform 0.5s ease-in-out;
+          backface-visibility: hidden;
+          z-index: 3;
+          opacity: 0;
+          pointer-events: none;
+        }
+        
+        .flipping.next .page-flip-effect {
+          opacity: 1;
+          transform: rotateY(-180deg);
+        }
+        
+        .flipping.prev .page-flip-effect {
+          opacity: 1;
+          transform: rotateY(180deg);
+          right: auto;
+          left: 11.5%;
+          transform-origin: right center;
         }
         
         /* 네비게이션 버튼 */
         .navigation-buttons {
           position: absolute;
-          width: 100%;
+          width: 120%;
           display: flex;
           justify-content: space-between;
           top: 50%;
@@ -383,8 +383,8 @@ export default function Memoir() {
           background-color: rgba(255, 248, 225, 0.7);
           border: 1px solid #D4A76A;
           color: #8B4513;
-          width: 40px;
-          height: 40px;
+          width: 60px;
+          height: 60px;
           border-radius: 50%;
           display: flex;
           align-items: center;
@@ -403,22 +403,73 @@ export default function Memoir() {
           cursor: not-allowed;
         }
         
-        .prev-button {
-          margin-left: -20px;
-        }
-        
-        .next-button {
-          margin-right: -20px;
-        }
-        
         /* 반응형 스타일 */
+        @media (max-width: 1400px) {
+          .book-wrapper {
+            max-width: 95%;
+            height: 80vh;
+          }
+        }
+        
+        @media (max-width: 1200px) {
+          .book-wrapper {
+            height: 75vh;
+          }
+          
+          .left-page-content,
+          .right-page-content {
+            padding: 25px;
+          }
+        }
+        
+        @media (max-width: 992px) {
+          .book-wrapper {
+            height: 70vh;
+          }
+          
+          .left-page-content,
+          .right-page-content {
+            padding: 20px;
+            width: 37%;
+          }
+          
+          .page-content {
+            font-size: 0.95rem;
+          }
+          
+          .left-page-content {
+            left: 12%;
+          }
+          
+          .right-page-content {
+            right: 12%;
+          }
+          
+          .page-flip-effect {
+            width: 37%;
+            left: 12%;
+          }
+        }
+        
         @media (max-width: 768px) {
-          .book {
+          .book-wrapper {
             height: 60vh;
           }
           
-          .book-page {
+          .left-page-content,
+          .right-page-content {
             padding: 15px;
+            width: 36%;
+            height: 70%;
+            top: 15%;
+          }
+          
+          .left-page-content {
+            left: 13%;
+          }
+          
+          .right-page-content {
+            right: 13%;
           }
           
           .page-content {
@@ -428,28 +479,79 @@ export default function Memoir() {
           .page-image {
             max-height: 150px;
           }
-        }
-        
-        @media (max-width: 480px) {
-          .book-binding {
-            width: 15px;
+          
+          .page-flip-effect {
+            width: 36%;
+            height: 70%;
+            top: 15%;
+            right: 13%;
           }
           
-          .book-page {
-            width: calc(50% - 7.5px);
+          .flipping.prev .page-flip-effect {
+            left: 13%;
+          }
+          
+          .nav-button {
+            width: 50px;
+            height: 50px;
+          }
+        }
+        
+        @media (max-width: 576px) {
+          .book-wrapper {
+            height: 50vh;
+          }
+          
+          .left-page-content,
+          .right-page-content {
             padding: 10px;
+            width: 35%;
+            height: 68%;
+            top: 16%;
+          }
+          
+          .left-page-content {
+            left: 14%;
+          }
+          
+          .right-page-content {
+            right: 14%;
           }
           
           .page-header h2 {
-            font-size: 1rem;
+            font-size: 0.9rem;
+          }
+          
+          .page-header p {
+            font-size: 0.7rem;
           }
           
           .page-content {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
           }
           
           .page-image {
-            max-height: 120px;
+            max-height: 100px;
+          }
+          
+          .page-number {
+            font-size: 0.7rem;
+          }
+          
+          .page-flip-effect {
+            width: 35%;
+            height: 68%;
+            top: 16%;
+            right: 14%;
+          }
+          
+          .flipping.prev .page-flip-effect {
+            left: 14%;
+          }
+          
+          .nav-button {
+            width: 40px;
+            height: 40px;
           }
         }
       `}</style>
