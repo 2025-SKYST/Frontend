@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { X, Plus } from "lucide-react"
+import { X, Plus, Sparkles } from "lucide-react"
 import Header from "@/components/header"
 import UserHeader from "@/components/user-header"
 
@@ -22,6 +22,7 @@ export default function AddPage({ params }: { params: { id: string } }) {
   const [currentTag, setCurrentTag] = useState("")
   const [description, setDescription] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [isGeneratingMetadata, setIsGeneratingMetadata] = useState(false)
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -48,9 +49,38 @@ export default function AddPage({ params }: { params: { id: string } }) {
     }
   }
 
+  const generateMetadata = async () => {
+    if (!imagePreview) return
+
+    setIsGeneratingMetadata(true)
+
+    // 실제로는 API 호출하여 태그와 설명 생성
+    // 여기서는 예시로 타임아웃 사용
+    setTimeout(() => {
+      setTags(["자동생성", "AI", "추억"])
+      setDescription("AI가 자동으로 생성한 이미지 설명입니다.")
+      setIsGeneratingMetadata(false)
+    }, 1500)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+
+    // 태그나 설명이 없는 경우 자동 생성
+    let finalTags = tags
+    let finalDescription = description
+
+    if (tags.length === 0 || !description) {
+      // 실제로는 API 호출하여 태그와 설명 생성
+      if (tags.length === 0) {
+        finalTags = ["자동생성", "AI", "추억"]
+      }
+
+      if (!description) {
+        finalDescription = "AI가 자동으로 생성한 이미지 설명입니다."
+      }
+    }
 
     // 여기에 AI 텍스트 생성 로직 추가
     // 실제로는 API 호출을 통해 텍스트를 생성
@@ -76,7 +106,7 @@ export default function AddPage({ params }: { params: { id: string } }) {
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="image">이미지 업로드</Label>
+                  <Label htmlFor="image">이미지 업로드 (필수)</Label>
                   <Input id="image" type="file" accept="image/*" onChange={handleImageChange} required />
 
                   {imagePreview && (
@@ -90,8 +120,22 @@ export default function AddPage({ params }: { params: { id: string } }) {
                   )}
                 </div>
 
+                {imagePreview && (
+                  <div className="flex justify-end">
+                    <Button
+                      type="button"
+                      onClick={generateMetadata}
+                      disabled={isGeneratingMetadata || !imagePreview}
+                      className="flex items-center text-sm bg-amber-600 hover:bg-amber-500"
+                    >
+                      <Sparkles size={16} className={`mr-2 ${isGeneratingMetadata ? "animate-pulse" : ""}`} />
+                      {isGeneratingMetadata ? "생성 중..." : "태그 및 설명 자동 생성"}
+                    </Button>
+                  </div>
+                )}
+
                 <div className="space-y-2">
-                  <Label htmlFor="tags">태그</Label>
+                  <Label htmlFor="tags">태그 (선택사항)</Label>
                   <div className="flex">
                     <Input
                       id="tags"
@@ -125,13 +169,12 @@ export default function AddPage({ params }: { params: { id: string } }) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="description">간단한 설명</Label>
+                  <Label htmlFor="description">간단한 설명 (선택사항)</Label>
                   <Textarea
                     id="description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="이 페이지에 대한 간단한 설명을 입력하세요"
-                    required
                   />
                 </div>
 
@@ -148,7 +191,7 @@ export default function AddPage({ params }: { params: { id: string } }) {
                     <Button
                       type="submit"
                       className="flex-1 bg-amber-600 hover:bg-amber-500"
-                      disabled={isLoading || !imagePreview || tags.length === 0 || !description}
+                      disabled={isLoading || !imagePreview}
                     >
                       {isLoading ? "생성 중..." : "AI로 회고록 생성하기"}
                     </Button>

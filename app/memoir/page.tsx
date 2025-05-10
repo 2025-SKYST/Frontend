@@ -1,9 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, Home } from "lucide-react"
 import Header from "@/components/header"
 import UserHeader from "@/components/user-header"
 
@@ -19,6 +19,7 @@ interface Page {
 
 export default function Memoir() {
   const router = useRouter()
+  const bookRef = useRef<HTMLDivElement>(null)
 
   const [pages, setPages] = useState<Page[]>([
     {
@@ -63,94 +64,497 @@ export default function Memoir() {
   ])
 
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
-  const currentPage = pages[currentPageIndex]
+  const [isFlipping, setIsFlipping] = useState(false)
+  const [flipDirection, setFlipDirection] = useState<"next" | "prev">("next")
+  const [visiblePages, setVisiblePages] = useState<[number, number]>([0, 1])
+
+  useEffect(() => {
+    // 페이지 로드 시 책 효과 초기화
+    if (bookRef.current) {
+      bookRef.current.classList.add("book-open")
+    }
+  }, [])
 
   const goToPreviousPage = () => {
-    if (currentPageIndex > 0) {
-      setCurrentPageIndex(currentPageIndex - 1)
+    if (currentPageIndex > 0 && !isFlipping) {
+      setFlipDirection("prev")
+      setIsFlipping(true)
+
+      // 페이지 넘김 애니메이션 후 상태 업데이트
+      setTimeout(() => {
+        setCurrentPageIndex(currentPageIndex - 2)
+        setVisiblePages([currentPageIndex - 2, currentPageIndex - 1])
+        setIsFlipping(false)
+      }, 500)
     }
   }
 
   const goToNextPage = () => {
-    if (currentPageIndex < pages.length - 1) {
-      setCurrentPageIndex(currentPageIndex + 1)
+    if (currentPageIndex < pages.length - 2 && !isFlipping) {
+      setFlipDirection("next")
+      setIsFlipping(true)
+
+      // 페이지 넘김 애니메이션 후 상태 업데이트
+      setTimeout(() => {
+        setCurrentPageIndex(currentPageIndex + 2)
+        setVisiblePages([currentPageIndex + 2, currentPageIndex + 3])
+        setIsFlipping(false)
+      }, 500)
     }
   }
+
+  // 현재 표시할 페이지들 (왼쪽, 오른쪽)
+  const leftPage = pages[visiblePages[0]] || null
+  const rightPage = pages[visiblePages[1]] || null
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       <UserHeader />
 
-      <main className="flex-1 p-6 bg-gradient-to-b from-amber-50 to-amber-100">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-amber-900">나의 회고록</h1>
-            <Button
-              onClick={() => router.push("/my-page")}
-              variant="outline"
-              className="border-amber-600 text-amber-800 hover:bg-amber-100"
-            >
-              돌아가기
-            </Button>
-          </div>
+      <main className="flex-1 p-4 bg-gradient-to-b from-amber-50 to-amber-100 flex flex-col items-center">
+        <div className="w-full max-w-7xl mx-auto mb-4 flex justify-between items-center">
+          <Button
+            onClick={() => router.push("/my-page")}
+            variant="outline"
+            className="border-amber-600 text-amber-800 hover:bg-amber-100"
+          >
+            <Home size={16} className="mr-2" />
+            돌아가기
+          </Button>
+          <h1 className="text-3xl font-bold text-amber-900">나의 회고록</h1>
+          <div className="w-[100px]"></div> {/* 균형을 위한 빈 공간 */}
+        </div>
 
-          <div className="flex justify-center mb-4">
-            <h2 className="text-xl font-semibold text-amber-800">
-              {currentPage.chapterTitle} - {currentPageIndex + 1}/{pages.length}
-            </h2>
-          </div>
+        <div className="book-outer-wrapper">
+          <div className="book-wrapper">
+            {/* 책 이미지 배경 */}
+            <div ref={bookRef} className={`book-container ${isFlipping ? `flipping ${flipDirection}` : ""}`}>
+              <div className="book-background">
+                <img src="/book-template.png" alt="Book template" className="book-image" />
 
-          <div className="flex justify-center">
-            <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg overflow-hidden flex flex-col md:flex-row">
-              {/* 책 왼쪽 페이지 (이미지 및 정보) */}
-              <div className="md:w-1/3 bg-amber-50 p-6 flex flex-col">
-                <div className="mb-4">
-                  <img
-                    src={currentPage.imageUrl || "/placeholder.svg"}
-                    alt={currentPage.description}
-                    className="w-full h-48 object-cover rounded-md shadow-sm"
-                  />
-                </div>
-                <h3 className="text-lg font-medium text-amber-900 mb-2">{currentPage.description}</h3>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {currentPage.tags.map((tag) => (
-                    <span key={tag} className="px-2 py-1 bg-amber-100 text-amber-800 text-xs rounded-full">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
+                {/* 왼쪽 페이지 콘텐츠 */}
+                {leftPage && (
+                  <div className="left-page-content">
+                    <div className="page-header">
+                      <h2 className="text-xl font-semibold text-amber-900">{leftPage.chapterTitle}</h2>
+                      <p className="text-sm text-amber-700">{leftPage.description}</p>
+                    </div>
 
-              {/* 책 오른쪽 페이지 (내용) */}
-              <div className="md:w-2/3 p-6 bg-amber-50 border-l border-amber-200">
-                <div className="prose prose-amber max-w-none font-serif text-lg leading-relaxed whitespace-pre-line">
-                  {currentPage.content}
-                </div>
+                    <div className="page-image-container">
+                      <img
+                        src={leftPage.imageUrl || "/placeholder.svg"}
+                        alt={leftPage.description}
+                        className="page-image"
+                      />
+                    </div>
+
+                    <div className="page-content">{leftPage.content}</div>
+
+                    <div className="page-number">{visiblePages[0] + 1}</div>
+                  </div>
+                )}
+
+                {/* 오른쪽 페이지 콘텐츠 */}
+                {rightPage && (
+                  <div className="right-page-content">
+                    <div className="page-header">
+                      <h2 className="text-xl font-semibold text-amber-900">{rightPage.chapterTitle}</h2>
+                      <p className="text-sm text-amber-700">{rightPage.description}</p>
+                    </div>
+
+                    <div className="page-image-container">
+                      <img
+                        src={rightPage.imageUrl || "/placeholder.svg"}
+                        alt={rightPage.description}
+                        className="page-image"
+                      />
+                    </div>
+
+                    <div className="page-content">{rightPage.content}</div>
+
+                    <div className="page-number">{visiblePages[1] + 1}</div>
+                  </div>
+                )}
+
+                {/* 페이지 넘김 효과를 위한 요소 */}
+                <div className="page-flip-effect"></div>
               </div>
             </div>
-          </div>
 
-          <div className="flex justify-center space-x-8 mt-8">
-            <Button
-              onClick={goToPreviousPage}
-              disabled={currentPageIndex === 0}
-              className="bg-amber-600 hover:bg-amber-500"
-            >
-              <ChevronLeft className="mr-2" size={16} />
-              이전 페이지
-            </Button>
-            <Button
-              onClick={goToNextPage}
-              disabled={currentPageIndex === pages.length - 1}
-              className="bg-amber-600 hover:bg-amber-500"
-            >
-              다음 페이지
-              <ChevronRight className="ml-2" size={16} />
-            </Button>
+            {/* 페이지 넘김 버튼 */}
+            <div className="navigation-buttons">
+              <Button
+                onClick={goToPreviousPage}
+                disabled={currentPageIndex === 0 || isFlipping}
+                className="nav-button prev-button"
+                variant="ghost"
+                size="icon"
+              >
+                <ChevronLeft size={24} />
+              </Button>
+
+              <Button
+                onClick={goToNextPage}
+                disabled={currentPageIndex >= pages.length - 2 || isFlipping}
+                className="nav-button next-button"
+                variant="ghost"
+                size="icon"
+              >
+                <ChevronRight size={24} />
+              </Button>
+            </div>
           </div>
         </div>
+
+        <div className="mt-4 text-center text-amber-800">
+          <p>
+            페이지 {currentPageIndex + 1}-{Math.min(currentPageIndex + 2, pages.length)} / 총 {pages.length}페이지
+          </p>
+        </div>
       </main>
+
+      <style jsx global>{`
+        /* 책 외부 래퍼 스타일 */
+        .book-outer-wrapper {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 0;
+        }
+        
+        /* 책 래퍼 스타일 */
+        .book-wrapper {
+          position: relative;
+          width: 100%;
+          max-width: 1400px;
+          height: 95vh;
+          max-height: 1200px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin: 0 auto;
+        }
+        
+        /* 책 컨테이너 스타일 */
+        .book-container {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          perspective: 1500px;
+          transition: transform 0.5s;
+        }
+        
+        .book-background {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        
+        .book-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        
+        /* 페이지 콘텐츠 스타일 */
+        .left-page-content,
+        .right-page-content {
+          position: absolute;
+          width: 38%;
+          height: 72%;
+          top: 14%;
+          z-index: 2;
+          overflow-y: auto;
+          padding: 30px;
+          display: flex;
+          flex-direction: column;
+          scrollbar-width: thin;
+          scrollbar-color: rgba(139, 69, 19, 0.3) transparent;
+        }
+        
+        .left-page-content::-webkit-scrollbar,
+        .right-page-content::-webkit-scrollbar {
+          width: 4px;
+        }
+        
+        .left-page-content::-webkit-scrollbar-thumb,
+        .right-page-content::-webkit-scrollbar-thumb {
+          background-color: rgba(139, 69, 19, 0.3);
+          border-radius: 2px;
+        }
+        
+        .left-page-content {
+          left: 11.5%;
+        }
+        
+        .right-page-content {
+          right: 11.5%;
+        }
+        
+        .page-header {
+          margin-bottom: 20px;
+          padding-bottom: 10px;
+          border-bottom: 1px solid rgba(139, 69, 19, 0.2);
+        }
+        
+        .page-image-container {
+          margin-bottom: 20px;
+          display: flex;
+          justify-content: center;
+        }
+        
+        .page-image {
+          width: 100%;
+          max-height: 200px;
+          object-fit: contain;
+          border-radius: 5px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .page-content {
+          flex: 1;
+          font-family: serif;
+          font-size: 1rem;
+          line-height: 1.6;
+          color: #5D4037;
+          white-space: pre-line;
+          text-align: justify;
+        }
+        
+        .page-number {
+          align-self: center;
+          font-size: 0.9rem;
+          color: #8B4513;
+          margin-top: 20px;
+          font-style: italic;
+        }
+        
+        /* 페이지 넘김 효과 */
+        .page-flip-effect {
+          position: absolute;
+          width: 38%;
+          height: 72%;
+          top: 14%;
+          right: 11.5%;
+          background-color: rgba(255, 255, 255, 0.9);
+          transform-origin: left center;
+          transform: rotateY(0deg);
+          transition: transform 0.5s ease-in-out;
+          backface-visibility: hidden;
+          z-index: 3;
+          opacity: 0;
+          pointer-events: none;
+        }
+        
+        .flipping.next .page-flip-effect {
+          opacity: 1;
+          transform: rotateY(-180deg);
+        }
+        
+        .flipping.prev .page-flip-effect {
+          opacity: 1;
+          transform: rotateY(180deg);
+          right: auto;
+          left: 11.5%;
+          transform-origin: right center;
+        }
+        
+        /* 네비게이션 버튼 */
+        .navigation-buttons {
+          position: absolute;
+          width: 120%;
+          display: flex;
+          justify-content: space-between;
+          top: 50%;
+          transform: translateY(-50%);
+          z-index: 10;
+          pointer-events: none;
+        }
+        
+        .nav-button {
+          background-color: rgba(255, 248, 225, 0.7);
+          border: 1px solid #D4A76A;
+          color: #8B4513;
+          width: 60px;
+          height: 60px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: all 0.3s;
+          pointer-events: auto;
+        }
+        
+        .nav-button:hover:not(:disabled) {
+          background-color: rgba(212, 167, 106, 0.3);
+        }
+        
+        .nav-button:disabled {
+          opacity: 0.3;
+          cursor: not-allowed;
+        }
+        
+        /* 반응형 스타일 */
+        @media (max-width: 1400px) {
+          .book-wrapper {
+            max-width: 95%;
+            height: 80vh;
+          }
+        }
+        
+        @media (max-width: 1200px) {
+          .book-wrapper {
+            height: 75vh;
+          }
+          
+          .left-page-content,
+          .right-page-content {
+            padding: 25px;
+          }
+        }
+        
+        @media (max-width: 992px) {
+          .book-wrapper {
+            height: 70vh;
+          }
+          
+          .left-page-content,
+          .right-page-content {
+            padding: 20px;
+            width: 37%;
+          }
+          
+          .page-content {
+            font-size: 0.95rem;
+          }
+          
+          .left-page-content {
+            left: 12%;
+          }
+          
+          .right-page-content {
+            right: 12%;
+          }
+          
+          .page-flip-effect {
+            width: 37%;
+            left: 12%;
+          }
+        }
+        
+        @media (max-width: 768px) {
+          .book-wrapper {
+            height: 60vh;
+          }
+          
+          .left-page-content,
+          .right-page-content {
+            padding: 15px;
+            width: 36%;
+            height: 70%;
+            top: 15%;
+          }
+          
+          .left-page-content {
+            left: 13%;
+          }
+          
+          .right-page-content {
+            right: 13%;
+          }
+          
+          .page-content {
+            font-size: 0.85rem;
+          }
+          
+          .page-image {
+            max-height: 150px;
+          }
+          
+          .page-flip-effect {
+            width: 36%;
+            height: 70%;
+            top: 15%;
+            right: 13%;
+          }
+          
+          .flipping.prev .page-flip-effect {
+            left: 13%;
+          }
+          
+          .nav-button {
+            width: 50px;
+            height: 50px;
+          }
+        }
+        
+        @media (max-width: 576px) {
+          .book-wrapper {
+            height: 50vh;
+          }
+          
+          .left-page-content,
+          .right-page-content {
+            padding: 10px;
+            width: 35%;
+            height: 68%;
+            top: 16%;
+          }
+          
+          .left-page-content {
+            left: 14%;
+          }
+          
+          .right-page-content {
+            right: 14%;
+          }
+          
+          .page-header h2 {
+            font-size: 0.9rem;
+          }
+          
+          .page-header p {
+            font-size: 0.7rem;
+          }
+          
+          .page-content {
+            font-size: 0.75rem;
+          }
+          
+          .page-image {
+            max-height: 100px;
+          }
+          
+          .page-number {
+            font-size: 0.7rem;
+          }
+          
+          .page-flip-effect {
+            width: 35%;
+            height: 68%;
+            top: 16%;
+            right: 14%;
+          }
+          
+          .flipping.prev .page-flip-effect {
+            left: 14%;
+          }
+          
+          .nav-button {
+            width: 40px;
+            height: 40px;
+          }
+        }
+      `}</style>
     </div>
   )
 }
