@@ -92,3 +92,53 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* 페이지 전환 애니메이션 */
+.transition-opacity {
+  transition: opacity 0.8s ease-in-out;
+}
+
+.duration-800 {
+  transition-duration: 800ms;
+}
+
+/* 버튼 호버 효과 */
+.hover\:scale-105:hover {
+  transform: scale(1.05);
+}
+
+/* 책 열림 애니메이션 강화 */
+.book-open {
+  animation: bookOpen 1.2s ease-out forwards;
+}
+
+@keyframes bookOpen {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 페이지 넘김 버튼 펄스 효과 */
+.nav-button:hover:not(:disabled) {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(212, 167, 106, 0.7);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(212, 167, 106, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(212, 167, 106, 0);
+  }
+}
