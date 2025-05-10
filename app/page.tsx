@@ -17,9 +17,7 @@ export default function Home() {
     <React.Fragment key="text2">
       아름다운 <span className="text-yellow-400">회고록</span>으로
     </React.Fragment>,
-    <React.Fragment key="text3">
-      AI의 도움으로 당신만의 특별한 회고록을 작성해보세요.
-    </React.Fragment>,
+    <React.Fragment key="text3">AI의 도움으로 당신만의 특별한 회고록을 작성해보세요.</React.Fragment>,
     <React.Fragment key="text4">잊혀진 기억들이 아름다운 이야기로 다시 태어납니다.</React.Fragment>,
   ]
 
@@ -322,6 +320,19 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* 전체 화면 화이트아웃 효과 - 페이지 전체에 적용 */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            className="fixed inset-0 bg-white z-50"
+            variants={overlayVariants}
+            initial="hidden"
+            animate="visible"
+            style={{ pointerEvents: "none" }}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }
