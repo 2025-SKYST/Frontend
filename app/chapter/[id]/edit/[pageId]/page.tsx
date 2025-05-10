@@ -146,10 +146,10 @@ export default function EditPage({ params }: { params: { id: string; pageId: str
       <Header />
       <UserHeader />
 
-      <main className="flex-1 p-6 bg-gradient-to-b from-amber-50 to-amber-100">
+      <main className="flex-1 p-6 bg-gradient-to-b from-rose-50 to-orange-50">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold text-amber-900">{page.description}</h1>
+            <h1 className="text-2xl font-bold text-rose-900">{page.description}</h1>
             <div className="flex space-x-2">
               <Button
                 variant="outline"
@@ -162,7 +162,7 @@ export default function EditPage({ params }: { params: { id: string; pageId: str
               </Button>
 
               {!isEditing ? (
-                <Button onClick={handleEdit} className="bg-amber-600 hover:bg-amber-500 flex items-center">
+                <Button onClick={handleEdit} className="bg-rose-600 hover:bg-rose-500 flex items-center">
                   <Edit size={16} className="mr-2" />
                   텍스트 편집
                 </Button>
@@ -172,7 +172,7 @@ export default function EditPage({ params }: { params: { id: string; pageId: str
                     <X size={16} className="mr-2" />
                     취소
                   </Button>
-                  <Button onClick={handleSave} className="bg-amber-600 hover:bg-amber-500 flex items-center">
+                  <Button onClick={handleSave} className="bg-rose-600 hover:bg-rose-500 flex items-center">
                     <Save size={16} className="mr-2" />
                     저장
                   </Button>
@@ -194,16 +194,16 @@ export default function EditPage({ params }: { params: { id: string; pageId: str
                     <>
                       <div className="flex flex-wrap gap-2 mb-2">
                         {page.tags.map((tag) => (
-                          <span key={tag} className="px-2 py-1 bg-amber-100 text-amber-800 text-xs rounded-full">
+                          <span key={tag} className="px-2 py-1 bg-orange-100 text-rose-700 text-xs rounded-full">
                             {tag}
                           </span>
                         ))}
                       </div>
-                      <p className="text-amber-900 font-medium">{page.description}</p>
+                      <p className="text-rose-900 font-medium">{page.description}</p>
                       <Button
                         onClick={handleEditMetadata}
                         variant="ghost"
-                        className="mt-2 text-amber-600 hover:text-amber-800 hover:bg-amber-50 p-0 h-auto"
+                        className="mt-2 text-rose-600 hover:text-rose-800 hover:bg-rose-50 p-0 h-auto"
                       >
                         <Edit size={14} className="mr-1" />
                         태그 및 설명 편집
@@ -212,16 +212,16 @@ export default function EditPage({ params }: { params: { id: string; pageId: str
                   ) : (
                     <div className="space-y-3">
                       <div>
-                        <label className="block text-sm font-medium text-amber-700 mb-1">태그</label>
+                        <label className="block text-sm font-medium text-rose-700 mb-1">태그</label>
                         <div className="flex mb-2">
                           <Input
                             value={newTag}
                             onChange={(e) => setNewTag(e.target.value)}
                             onKeyDown={handleKeyDown}
                             placeholder="새 태그 추가"
-                            className="flex-1 text-sm"
+                            className="flex-1 text-sm border-orange-200 focus-visible:ring-rose-500"
                           />
-                          <Button type="button" onClick={addTag} className="ml-2 bg-amber-600 hover:bg-amber-500 h-9">
+                          <Button type="button" onClick={addTag} className="ml-2 bg-rose-600 hover:bg-rose-500 h-9">
                             <Plus size={14} />
                           </Button>
                         </div>
@@ -229,13 +229,13 @@ export default function EditPage({ params }: { params: { id: string; pageId: str
                           {editedTags.map((tag) => (
                             <div
                               key={tag}
-                              className="flex items-center bg-amber-100 text-amber-800 px-2 py-1 rounded-full text-xs"
+                              className="flex items-center bg-orange-100 text-rose-700 px-2 py-1 rounded-full text-xs"
                             >
                               <span>{tag}</span>
                               <button
                                 type="button"
                                 onClick={() => removeTag(tag)}
-                                className="ml-1 text-amber-600 hover:text-amber-800"
+                                className="ml-1 text-rose-600 hover:text-rose-800"
                               >
                                 <X size={12} />
                               </button>
@@ -245,11 +245,11 @@ export default function EditPage({ params }: { params: { id: string; pageId: str
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-amber-700 mb-1">설명</label>
+                        <label className="block text-sm font-medium text-rose-700 mb-1">설명</label>
                         <Textarea
                           value={editedDescription}
                           onChange={(e) => setEditedDescription(e.target.value)}
-                          className="text-sm"
+                          className="text-sm border-orange-200 focus-visible:ring-rose-500"
                           rows={3}
                         />
                       </div>
@@ -260,7 +260,7 @@ export default function EditPage({ params }: { params: { id: string; pageId: str
                         </Button>
                         <Button
                           onClick={handleSaveMetadata}
-                          className="flex-1 bg-amber-600 hover:bg-amber-500 text-xs h-8"
+                          className="flex-1 bg-rose-600 hover:bg-rose-500 text-xs h-8"
                         >
                           저장
                         </Button>
@@ -272,15 +272,15 @@ export default function EditPage({ params }: { params: { id: string; pageId: str
             </div>
 
             <div className="md:w-2/3">
-              <Card className="p-6 min-h-[400px] bg-amber-50 shadow-md">
+              <Card className="p-6 min-h-[400px] bg-rose-50 shadow-md">
                 {isEditing ? (
                   <Textarea
                     value={editedContent}
                     onChange={(e) => setEditedContent(e.target.value)}
-                    className="min-h-[400px] font-serif text-lg leading-relaxed bg-amber-50 border-amber-200 focus-visible:ring-amber-500"
+                    className="min-h-[400px] font-serif text-lg leading-relaxed bg-rose-50 border-orange-200 focus-visible:ring-rose-500"
                   />
                 ) : (
-                  <div className="prose prose-amber max-w-none font-serif text-lg leading-relaxed whitespace-pre-line">
+                  <div className="prose prose-rose max-w-none font-serif text-lg leading-relaxed whitespace-pre-line">
                     {page.content}
                   </div>
                 )}
@@ -302,7 +302,7 @@ export default function EditPage({ params }: { params: { id: string; pageId: str
               <Button variant="outline" onClick={() => router.push(`/chapter/${chapterId}`)} className="px-8">
                 취소
               </Button>
-              <Button onClick={handleFinish} className="bg-amber-800 hover:bg-amber-700 px-8">
+              <Button onClick={handleFinish} className="bg-rose-800 hover:bg-rose-700 px-8">
                 완료
               </Button>
             </div>
