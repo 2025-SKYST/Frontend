@@ -292,11 +292,11 @@ export default function Memoir() {
         }
         
         .left-page-content {
-          left: 11.5%;
+          left: 11%;
         }
         
         .right-page-content {
-          right: 11.5%;
+          right: 10.5%;
         }
         
         .page-header {
@@ -340,30 +340,34 @@ export default function Memoir() {
         /* 페이지 넘김 효과 */
         .page-flip-effect {
           position: absolute;
-          width: 38%;
-          height: 72%;
-          top: 14%;
-          right: 11.5%;
+          width: 43%;
+          height: 73%;
+          top: 12.1%;
+          right: 11%;
           background-color: rgba(255, 255, 255, 0.9);
           transform-origin: left center;
           transform: rotateY(0deg);
-          transition: transform 0.5s ease-in-out;
+          transition: transform 0.6s cubic-bezier(0.86, 0, 0.07, 1);
           backface-visibility: hidden;
           z-index: 3;
           opacity: 0;
           pointer-events: none;
+          
         }
         
         .flipping.next .page-flip-effect {
           opacity: 1;
           transform: rotateY(-180deg);
+          left: auto;
+          right: 6.3%;
+          transform-origin: left center;
         }
         
         .flipping.prev .page-flip-effect {
           opacity: 1;
           transform: rotateY(180deg);
           right: auto;
-          left: 11.5%;
+          left: 7.5%;
           transform-origin: right center;
         }
         
