@@ -65,7 +65,7 @@ export default function Home() {
   // 전체 화면 화이트아웃
   const overlayVariants = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { delay: 1.1, duration: 0.7, ease: "easeInOut" } },
+    visible: { opacity: 1, transition: { delay: 0.7, duration: 0.5, ease: "easeInOut" } },
   }
 
   // 텍스트 애니메이션
