@@ -10,7 +10,6 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { RefreshCw, Edit, Save, X, Plus, Trash2 } from "lucide-react"
 import Header from "@/components/header"
-import UserHeader from "@/components/user-header"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -144,7 +143,6 @@ export default function EditPage({ params }: { params: { id: string; pageId: str
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <UserHeader />
 
       <main className="flex-1 p-6 bg-gradient-to-b from-rose-50 to-orange-50">
         <div className="max-w-4xl mx-auto">

@@ -22,16 +22,16 @@ export default function Header() {
         </Link>
         <div className="space-x-2">
           {isAuthenticated ? (
-            <Button className="bg-rose-400 hover:bg-rose-400 text-white" onClick={handleLogout}>
+            <Button className="bg-rose-400 hover:bg-rose-500 text-white" onClick={handleLogout}>
               로그아웃
             </Button>
           ) : (
             <>
               <Link href="/signin">
-                <Button className="bg-rose-400 hover:bg-rose-400 text-white">로그인</Button>
+                <Button className="bg-rose-400 hover:bg-rose-500 text-white">로그인</Button>
               </Link>
               <Link href="/signup">
-                <Button className="bg-rose-400 hover:bg-rose-400 text-white">회원가입</Button>
+                <Button className="bg-rose-400 hover:bg-rose-500 text-white">회원가입</Button>
               </Link>
             </>
           )}

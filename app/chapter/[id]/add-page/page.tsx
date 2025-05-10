@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/card";
 import { X, Plus } from "lucide-react";
 import Header from "@/components/header";
-import UserHeader from "@/components/user-header";
+// import UserHeader from "@/components/user-header";
 import { useAuth } from "@/hooks/useAuth";
 import { createImage } from "@/lib/imageService";
 

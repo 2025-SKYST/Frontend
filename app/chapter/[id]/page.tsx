@@ -6,7 +6,6 @@ import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, ArrowLeft, Trash2 } from "lucide-react";
 import Header from "@/components/header";
-import UserHeader from "@/components/user-header";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -93,9 +92,12 @@ export default function ViewChapter() {
               {chapterTitle || "Loading..."}
             </h1>
             <Link href="/my-page">
-              <Button variant="ghost" className="ml-4">
+              <Button
+                variant="outline"
+                className="mt-8 border-rose-600 text-rose-800 hover:bg-orange-100"
+              >
                 돌아가기
-                <ArrowLeft className="ml-2" size={16} />
+                <ArrowLeft className="ml" size={16} />
               </Button>
             </Link>
           </div>
