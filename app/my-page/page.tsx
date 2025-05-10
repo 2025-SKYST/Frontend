@@ -146,10 +146,10 @@ export default function MemoirTimeline() {
                               />
                             </div>
                             <div className="p-5">
-                              <h3 className="font-medium text-amber-900 truncate">
+                              <h3 className="font-medium text-rose-900 truncate">
                                 {chapter.chapter_name}
                               </h3>
-                              <p className="text-xs text-amber-700 mt-1 line-clamp-2">
+                              <p className="text-xs text-rose-700 mt-1 line-clamp-2">
                                 {chapter.prologue}
                               </p>
                             </div>

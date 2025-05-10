@@ -96,7 +96,7 @@ export default function SignUp() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1 flex items-center justify-center p-6 bg-gradient-to-b from-amber-50 to-amber-100">
+      <main className="flex-1 flex items-center justify-center p-6 bg-gradient-to-b from-rose-50 to-orange-50">
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle className="text-2xl text-center">회원가입</CardTitle>
@@ -325,7 +325,7 @@ export default function SignUp() {
                 />
               </div>
 
-              <Button type="submit" className="w-full bg-amber-600 hover:bg-amber-500">
+              <Button type="submit" className="w-full bg-rose-600 hover:bg-rose-500">
                 회원가입
               </Button>
             </form>
@@ -333,7 +333,7 @@ export default function SignUp() {
           <CardFooter className="flex justify-center">
             <p>
               이미 계정이 있으신가요?{" "}
-              <Link href="/signin" className="text-amber-600 hover:underline">
+              <Link href="/signin" className="text-rose-600 hover:underline">
                 로그인
               </Link>
             </p>
