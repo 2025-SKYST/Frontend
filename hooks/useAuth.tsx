@@ -1,3 +1,4 @@
+// hooks/useAuth.tsx
 "use client";
 
 import React, {
@@ -7,7 +8,7 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import * as authService from "../lib/authService";
+import * as authService from "@/lib/authService";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -20,17 +21,14 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // 초기값은 null
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [refreshToken, setRefreshToken] = useState<string | null>(null);
-
-  // 클라이언트 마운트 후에만 localStorage에서 불러오기
-  useEffect(() => {
-    const at = localStorage.getItem("accessToken");
-    const rt = localStorage.getItem("refreshToken");
-    if (at) setAccessToken(at);
-    if (rt) setRefreshToken(rt);
-  }, []);
+  const [accessToken, setAccessToken] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("accessToken");
+  });
+  const [refreshToken, setRefreshToken] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("refreshToken");
+  });
 
   // 9분마다 자동 갱신
   useEffect(() => {
