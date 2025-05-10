@@ -81,52 +81,93 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col overflow-auto">
-      {/* 상단 배경 + 텍스트 */}
       <div className="relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-black to-transparent z-10" style={{ height: "70vh" }} />
+        {/* 검은색 그라데이션 오버레이 */}
+        <div
+          className="absolute inset-0 bg-gradient-to-b from-black via-black to-transparent z-10"
+          style={{ height: "70vh" }}
+        ></div>
+
+        {/* 배경 이미지 */}
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('/combined-bg.jpg')", backgroundPosition: "center 39%", height: "100vh" }}
-        />
+          style={{
+            backgroundImage: "url('/combined-bg.jpg')",
+            backgroundPosition: "center 39%",
+            height: "100vh",
+          }}
+        ></div>
+
+        {/* 텍스트 콘텐츠 */}
         <div className="relative z-20 pt-32 px-6 min-h-[60vh]">
           <div className="max-w-4xl mx-auto text-white">
-            {[0, 1].map((i) => (
-              <div key={i} className={`h-${i===0?"24":"24"} md:h-${i===0?"32":"32"} overflow-hidden`}>
-                <AnimatePresence mode="wait">
-                  {textIndex >= i && (
-                    <motion.h1
-                      key={`heading${i}`}
-                      className="text-4xl md:text-5xl lg:text-6xl font-bold mb-3 leading-tight"
-                      variants={textVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                    >
-                      {texts[i]}
-                    </motion.h1>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
+            <div className="h-24 md:h-32 overflow-hidden">
+              <AnimatePresence mode="wait">
+                {textIndex >= 0 && (
+                  <motion.h1
+                    key="heading1"
+                    className="text-4xl md:text-5xl lg:text-6xl font-bold mb-3 leading-tight"
+                    variants={textVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                  >
+                    {texts[0]}
+                  </motion.h1>
+                )}
+              </AnimatePresence>
+            </div>
 
-            {[2, 3].map((i) => (
-              <div key={i} className="h-12 md:h-16 overflow-hidden">
-                <AnimatePresence mode="wait">
-                  {textIndex >= i && (
-                    <motion.p
-                      key={`para${i}`}
-                      className="text-lg md:text-xl text-gray-300 max-w-3xl"
-                      variants={textVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                    >
-                      {texts[i]}
-                    </motion.p>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
+            <div className="h-24 md:h-32 overflow-hidden">
+              <AnimatePresence mode="wait">
+                {textIndex >= 1 && (
+                  <motion.h1
+                    key="heading2"
+                    className="text-4xl md:text-5xl lg:text-6xl font-bold mb-3 leading-tight"
+                    variants={textVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                  >
+                    {texts[1]}
+                  </motion.h1>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <div className="h-12 md:h-16 overflow-hidden">
+              <AnimatePresence mode="wait">
+                {textIndex >= 2 && (
+                  <motion.p
+                    key="paragraph1"
+                    className="text-lg md:text-xl text-gray-300 max-w-3xl"
+                    variants={textVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                  >
+                    {texts[2]}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <div className="h-12 md:h-16 overflow-hidden">
+              <AnimatePresence mode="wait">
+                {textIndex >= 2 && (
+                  <motion.p
+                    key="paragraph1"
+                    className="text-lg md:text-xl text-gray-300 max-w-3xl"
+                    variants={textVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                  >
+                    {texts[3]}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
       </div>
@@ -182,7 +223,71 @@ export default function Home() {
 
       {/* 추가 콘텐츠 */}
       <section className="bg-gray-50 py-20 px-6">
-        {/* …생략… */}
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-gray-800 mb-8">회고록 서비스 특징</h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <div className="w-12 h-12 bg-lime-100 rounded-full flex items-center justify-center mb-4">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6 text-lime-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold mb-2">쉬운 작성</h3>
+              <p className="text-gray-600">사진과 간단한 설명만으로 AI가 아름다운 회고록을 작성해 드립니다.</p>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <div className="w-12 h-12 bg-lime-100 rounded-full flex items-center justify-center mb-4">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6 text-lime-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold mb-2">챕터 구성</h3>
+              <p className="text-gray-600">여러 챕터로 나누어 체계적으로 당신의 인생 이야기를 구성할 수 있습니다.</p>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <div className="w-12 h-12 bg-lime-100 rounded-full flex items-center justify-center mb-4">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6 text-lime-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold mb-2">안전한 보관</h3>
+              <p className="text-gray-600">
+                당신의 소중한 기억과 이야기를 안전하게 보관하고 언제든지 열람할 수 있습니다.
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* 화이트아웃 오버레이 */}
