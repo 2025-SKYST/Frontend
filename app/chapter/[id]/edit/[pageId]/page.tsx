@@ -8,9 +8,19 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
-import { RefreshCw, Edit, Save, X, Plus } from "lucide-react"
+import { RefreshCw, Edit, Save, X, Plus, Trash2 } from "lucide-react"
 import Header from "@/components/header"
 import UserHeader from "@/components/user-header"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 export default function EditPage({ params }: { params: { id: string; pageId: string } }) {
   const router = useRouter()
@@ -19,6 +29,7 @@ export default function EditPage({ params }: { params: { id: string; pageId: str
   const [isEditing, setIsEditing] = useState(false)
   const [isEditingMetadata, setIsEditingMetadata] = useState(false)
   const [isRegenerating, setIsRegenerating] = useState(false)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [page, setPage] = useState({
     id: pageId,
     imageUrl: "/childhood-playground.png",
@@ -99,6 +110,16 @@ export default function EditPage({ params }: { params: { id: string; pageId: str
   }
 
   const handleFinish = () => {
+    router.push(`/chapter/${chapterId}`)
+  }
+
+  const handleDelete = () => {
+    setIsDeleteDialogOpen(true)
+  }
+
+  const confirmDelete = () => {
+    // 실제로는 API 호출하여 페이지 삭제
+    console.log(`페이지 삭제: ${pageId}`)
     router.push(`/chapter/${chapterId}`)
   }
 
@@ -267,16 +288,44 @@ export default function EditPage({ params }: { params: { id: string; pageId: str
             </div>
           </div>
 
-          <div className="flex justify-center space-x-4 mt-8">
-            <Button variant="outline" onClick={() => router.push(`/chapter/${chapterId}`)} className="px-8">
-              취소
+          <div className="flex justify-between mt-8">
+            <Button
+              variant="outline"
+              onClick={handleDelete}
+              className="px-4 text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 hover:border-red-300"
+            >
+              <Trash2 size={16} className="mr-2" />
+              페이지 삭제
             </Button>
-            <Button onClick={handleFinish} className="bg-amber-800 hover:bg-amber-700 px-8">
-              완료
-            </Button>
+
+            <div className="flex space-x-4">
+              <Button variant="outline" onClick={() => router.push(`/chapter/${chapterId}`)} className="px-8">
+                취소
+              </Button>
+              <Button onClick={handleFinish} className="bg-amber-800 hover:bg-amber-700 px-8">
+                완료
+              </Button>
+            </div>
           </div>
         </div>
       </main>
+
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>페이지 삭제</AlertDialogTitle>
+            <AlertDialogDescription>
+              이 페이지를 정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>취소</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+              삭제
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
