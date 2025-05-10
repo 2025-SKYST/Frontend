@@ -38,6 +38,13 @@ export default function ViewChapter() {
   const [deletePageId, setDeletePageId] = useState<string | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
+
+  // Function to truncate text
+  const truncateText = (text: string, maxLength: number = 150) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + "...";
+  };
+
   useEffect(() => {
     const header = getAuthHeader();
     if (!header || Object.keys(header).length === 0) {
@@ -170,7 +177,7 @@ export default function ViewChapter() {
                                 ))}
                               </div>
                               <p className="text-orange-700 text-sm whitespace-pre-wrap">
-                                {page.content}
+                                {truncateText(page.content)}
                               </p>
                             </div>
                           </div>
