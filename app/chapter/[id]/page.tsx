@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, ArrowLeft, Trash2 } from "lucide-react";
@@ -49,13 +48,13 @@ export default function ViewChapter() {
     getImages(chapterId, header)
       .then((imgs) => {
         setChapterTitle(`Chapter ${chapterId}`);
-
+        for (const img of imgs) {
+          console.log(img.file_url);
+        }
         const mapped: Page[] = imgs.map((img) => ({
           id: String(img.id),
-          // Use presigned URL from file_url
           imageUrl: img.file_url,
           tags: [],
-          // Show full img.content as description
           description: img.content || "(No description)",
           content: img.content || "",
         }));
@@ -67,7 +66,8 @@ export default function ViewChapter() {
       });
   }, [chapterId, getAuthHeader, router]);
 
-  const addPage = (index: number) => router.push(`/chapter/${chapterId}/add-page`);
+  const addPage = (index: number) =>
+    router.push(`/chapter/${chapterId}/add-page`);
 
   const handleDeleteClick = (pageId: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -135,7 +135,10 @@ export default function ViewChapter() {
                   {pages.map((page, index) => (
                     <React.Fragment key={`pair-${page.id}`}>
                       <div className="flex flex-col items-center justify-center">
-                        <Link href={`/chapter/${chapterId}/edit/${page.id}`} className="w-96 relative group">
+                        <Link
+                          href={`/chapter/${chapterId}/edit/${page.id}`}
+                          className="w-96 relative group"
+                        >
                           <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                             <button
                               onClick={(e) => handleDeleteClick(page.id, e)}
@@ -144,12 +147,15 @@ export default function ViewChapter() {
                             >
                               <Trash2 size={14} />
                             </button>
-                            <div className="relative h-48 w-full">
-                              <Image
+                            <div className="h-48 overflow-hidden bg-gray-100 flex items-center justify-center">
+                              <img
                                 src={page.imageUrl}
                                 alt={page.description}
-                                fill
-                                className="object-cover"
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  (e.currentTarget as HTMLImageElement).src =
+                                    "/placeholder.svg";
+                                }}
                               />
                             </div>
                             <div className="p-5">
@@ -201,7 +207,10 @@ export default function ViewChapter() {
           </div>
         )}
       </main>
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>페이지 삭제</AlertDialogTitle>
@@ -211,7 +220,10 @@ export default function ViewChapter() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>취소</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
               삭제
             </AlertDialogAction>
           </AlertDialogFooter>
