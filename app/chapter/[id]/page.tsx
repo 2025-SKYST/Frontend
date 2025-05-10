@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, ArrowLeft, Trash2 } from "lucide-react";
@@ -33,12 +34,11 @@ export default function ViewChapter() {
   const chapterId = params?.id as string;
   const { getAuthHeader } = useAuth();
 
-  const [chapterTitle, setChapterTitle] = useState("");
+  const [chapterTitle, setChapterTitle] = useState<string>("Loading...");
   const [pages, setPages] = useState<Page[]>([]);
   const [deletePageId, setDeletePageId] = useState<string | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  // Fetch images on mount
   useEffect(() => {
     const header = getAuthHeader();
     if (!header || Object.keys(header).length === 0) {
@@ -48,24 +48,26 @@ export default function ViewChapter() {
 
     getImages(chapterId, header)
       .then((imgs) => {
-        // Map API images to our Page interface
+        setChapterTitle(`Chapter ${chapterId}`);
+
         const mapped: Page[] = imgs.map((img) => ({
           id: String(img.id),
+          // Use presigned URL from file_url
           imageUrl: img.file_url,
-          tags: [], // populate if API returns tags
-          description: img.content || "",
-          content: "", // populate if you have additional content
+          tags: [],
+          // Show full img.content as description
+          description: img.content || "(No description)",
+          content: img.content || "",
         }));
         setPages(mapped);
       })
       .catch((err) => {
         console.error("Failed to load chapter images:", err);
+        setChapterTitle("Error loading chapter");
       });
   }, [chapterId, getAuthHeader, router]);
 
-  const addPage = (index: number) => {
-    router.push(`/chapter/${chapterId}/add-page`);
-  };
+  const addPage = (index: number) => router.push(`/chapter/${chapterId}/add-page`);
 
   const handleDeleteClick = (pageId: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -88,16 +90,11 @@ export default function ViewChapter() {
       <main className="flex-1 p-6 bg-gradient-to-b from-rose-50 to-orange-50">
         <div className="max-w-6xl mx-auto mb-8">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-rose-900">
-              {chapterTitle || "Loading..."}
-            </h1>
+            <h1 className="text-3xl font-bold text-rose-900">{chapterTitle}</h1>
             <Link href="/my-page">
-              <Button
-                variant="outline"
-                className="mt-8 border-rose-600 text-rose-800 hover:bg-orange-100"
-              >
+              <Button variant="ghost" className="ml-4">
                 돌아가기
-                <ArrowLeft className="ml" size={16} />
+                <ArrowLeft className="ml-2" size={16} />
               </Button>
             </Link>
           </div>
@@ -138,10 +135,7 @@ export default function ViewChapter() {
                   {pages.map((page, index) => (
                     <React.Fragment key={`pair-${page.id}`}>
                       <div className="flex flex-col items-center justify-center">
-                        <Link
-                          href={`/chapter/${chapterId}/edit/${page.id}`}
-                          className="w-96 relative group"
-                        >
+                        <Link href={`/chapter/${chapterId}/edit/${page.id}`} className="w-96 relative group">
                           <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                             <button
                               onClick={(e) => handleDeleteClick(page.id, e)}
@@ -150,15 +144,16 @@ export default function ViewChapter() {
                             >
                               <Trash2 size={14} />
                             </button>
-                            <div className="h-48 overflow-hidden">
-                              <img
-                                src={page.imageUrl || "/placeholder.svg"}
+                            <div className="relative h-48 w-full">
+                              <Image
+                                src={page.imageUrl}
                                 alt={page.description}
-                                className="w-full h-full object-cover"
+                                fill
+                                className="object-cover"
                               />
                             </div>
                             <div className="p-5">
-                              <div className="flex flex-wrap gap-1 mb-1">
+                              <div className="flex flex-wrap gap-1 mb-2">
                                 {page.tags.map((tag) => (
                                   <span
                                     key={tag}
@@ -168,22 +163,18 @@ export default function ViewChapter() {
                                   </span>
                                 ))}
                               </div>
-                              <p className="text-rose-900 font-medium truncate">
+                              <p className="text-rose-900 font-medium mb-1">
                                 {page.description}
                               </p>
-                              <p className="text-orange-700 text-sm mt-1 line-clamp-2">
+                              <p className="text-orange-700 text-sm whitespace-pre-wrap">
                                 {page.content}
                               </p>
                             </div>
                           </div>
                         </Link>
                       </div>
-
                       {index < pages.length - 1 && (
-                        <div
-                          key={`add-${page.id}`}
-                          className="flex items-center justify-center"
-                        >
+                        <div className="flex items-center justify-center">
                           <button
                             onClick={() => addPage(index + 1)}
                             className="w-8 h-8 rounded-full bg-rose-400 text-white flex items-center justify-center hover:bg-orange-300 transition-colors"
@@ -210,11 +201,7 @@ export default function ViewChapter() {
           </div>
         )}
       </main>
-
-      <AlertDialog
-        open={isDeleteDialogOpen}
-        onOpenChange={setIsDeleteDialogOpen}
-      >
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>페이지 삭제</AlertDialogTitle>
@@ -224,10 +211,7 @@ export default function ViewChapter() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>취소</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmDelete}
-              className="bg-red-600 hover:bg-red-700"
-            >
+            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
               삭제
             </AlertDialogAction>
           </AlertDialogFooter>
