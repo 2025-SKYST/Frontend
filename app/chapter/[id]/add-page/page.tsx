@@ -97,24 +97,33 @@ export default function AddPage({ params }: { params: { id: string } }) {
       <Header />
       <UserHeader />
 
-      <main className="flex-1 p-6 bg-gradient-to-b from-amber-50 to-amber-100">
+      <main className="flex-1 p-6 bg-gradient-to-b from-rose-50 to-orange-50">
         <div className="max-w-3xl mx-auto">
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl text-center">새 페이지 추가</CardTitle>
+              <CardTitle className="text-2xl text-center text-rose-900">새 페이지 추가</CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="image">이미지 업로드 (필수)</Label>
-                  <Input id="image" type="file" accept="image/*" onChange={handleImageChange} required />
+                  <Label htmlFor="image" className="text-rose-800">
+                    이미지 업로드 (필수)
+                  </Label>
+                  <Input
+                    id="image"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    required
+                    className="border-orange-200 focus-visible:ring-rose-500"
+                  />
 
                   {imagePreview && (
                     <div className="mt-4 relative">
                       <img
                         src={imagePreview || "/placeholder.svg"}
                         alt="이미지 미리보기"
-                        className="w-full h-64 object-contain border rounded-md"
+                        className="w-full h-64 object-contain border border-orange-200 rounded-md"
                       />
                     </div>
                   )}
@@ -126,7 +135,7 @@ export default function AddPage({ params }: { params: { id: string } }) {
                       type="button"
                       onClick={generateMetadata}
                       disabled={isGeneratingMetadata || !imagePreview}
-                      className="flex items-center text-sm bg-amber-600 hover:bg-amber-500"
+                      className="flex items-center text-sm bg-rose-600 hover:bg-rose-500"
                     >
                       <Sparkles size={16} className={`mr-2 ${isGeneratingMetadata ? "animate-pulse" : ""}`} />
                       {isGeneratingMetadata ? "생성 중..." : "태그 및 설명 자동 생성"}
@@ -135,7 +144,9 @@ export default function AddPage({ params }: { params: { id: string } }) {
                 )}
 
                 <div className="space-y-2">
-                  <Label htmlFor="tags">태그 (선택사항)</Label>
+                  <Label htmlFor="tags" className="text-rose-800">
+                    태그 (선택사항)
+                  </Label>
                   <div className="flex">
                     <Input
                       id="tags"
@@ -143,9 +154,9 @@ export default function AddPage({ params }: { params: { id: string } }) {
                       onChange={(e) => setCurrentTag(e.target.value)}
                       onKeyDown={handleKeyDown}
                       placeholder="태그를 입력하고 Enter 또는 추가 버튼을 누르세요"
-                      className="flex-1"
+                      className="flex-1 border-orange-200 focus-visible:ring-rose-500"
                     />
-                    <Button type="button" onClick={addTag} className="ml-2 bg-amber-600 hover:bg-amber-500">
+                    <Button type="button" onClick={addTag} className="ml-2 bg-rose-600 hover:bg-rose-500">
                       <Plus size={16} />
                     </Button>
                   </div>
@@ -153,12 +164,12 @@ export default function AddPage({ params }: { params: { id: string } }) {
                   {tags.length > 0 && (
                     <div className="flex flex-wrap gap-2 mt-2">
                       {tags.map((tag) => (
-                        <div key={tag} className="flex items-center bg-amber-100 text-amber-800 px-3 py-1 rounded-full">
+                        <div key={tag} className="flex items-center bg-orange-100 text-rose-700 px-3 py-1 rounded-full">
                           <span>{tag}</span>
                           <button
                             type="button"
                             onClick={() => removeTag(tag)}
-                            className="ml-2 text-amber-600 hover:text-amber-800"
+                            className="ml-2 text-rose-600 hover:text-rose-800"
                           >
                             <X size={14} />
                           </button>
@@ -169,12 +180,15 @@ export default function AddPage({ params }: { params: { id: string } }) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="description">간단한 설명 (선택사항)</Label>
+                  <Label htmlFor="description" className="text-rose-800">
+                    간단한 설명 (선택사항)
+                  </Label>
                   <Textarea
                     id="description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="이 페이지에 대한 간단한 설명을 입력하세요"
+                    className="border-orange-200 focus-visible:ring-rose-500"
                   />
                 </div>
 
@@ -183,14 +197,14 @@ export default function AddPage({ params }: { params: { id: string } }) {
                     <Button
                       type="button"
                       variant="outline"
-                      className="flex-1"
+                      className="flex-1 border-orange-200 text-rose-700 hover:bg-rose-50"
                       onClick={() => router.push(`/chapter/${chapterId}`)}
                     >
                       취소
                     </Button>
                     <Button
                       type="submit"
-                      className="flex-1 bg-amber-600 hover:bg-amber-500"
+                      className="flex-1 bg-rose-600 hover:bg-rose-500"
                       disabled={isLoading || !imagePreview}
                     >
                       {isLoading ? "생성 중..." : "AI로 회고록 생성하기"}

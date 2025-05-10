@@ -77,10 +77,10 @@ export default function ViewChapter() {
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <main className="flex-1 p-6 bg-gradient-to-b from-amber-50 to-amber-100">
+      <main className="flex-1 p-6 bg-gradient-to-b from-rose-50 to-orange-50">
         <div className="max-w-6xl mx-auto mb-8">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-amber-900">
+            <h1 className="text-3xl font-bold text-rose-900">
               {chapterTitle}
             </h1>
             <Link href="/my-page">
@@ -96,7 +96,7 @@ export default function ViewChapter() {
           <div className="w-full flex items-center justify-center py-32">
             <button
               onClick={() => addPage(0)}
-              className="bg-amber-600 hover:bg-amber-500 text-white rounded-full p-8 shadow-lg transition-colors"
+              className="bg-rose-400 hover:bg-orange-300 text-white rounded-full p-8 shadow-lg transition-colors"
               aria-label="Add first page"
             >
               <PlusCircle size={64} />
@@ -105,13 +105,13 @@ export default function ViewChapter() {
         ) : (
           <div className="w-full overflow-x-auto pb-8">
             <div className="relative py-16 px-12 min-w-fit">
-              <div className="absolute left-12 right-12 top-1/2 h-1 bg-amber-300 transform -translate-y-1/2 z-0" />
+              <div className="absolute left-12 right-12 top-1/2 h-1 bg-orange-200 transform -translate-y-1/2 z-0" />
 
               <div className="relative z-10 flex items-center justify-center">
                 <div className="flex items-center justify-center w-16 mr-12">
                   <button
                     onClick={() => addPage(0)}
-                    className="w-10 h-10 rounded-full bg-amber-600 text-white flex items-center justify-center hover:bg-amber-500 transition-colors"
+                    className="w-10 h-10 rounded-full bg-rose-400 text-white flex items-center justify-center hover:bg-orange-300 transition-colors"
                     aria-label="Add page at beginning"
                   >
                     <PlusCircle size={24} />
@@ -131,7 +131,7 @@ export default function ViewChapter() {
                       <div className="flex flex-col items-center justify-center">
                         <Link
                           href={`/chapter/${chapterId}/edit/${page.id}`}
-                          className="w-64 relative group"
+                          className="w-96 relative group" // ← 너비 확대
                         >
                           <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                             <button
@@ -141,28 +141,28 @@ export default function ViewChapter() {
                             >
                               <Trash2 size={14} />
                             </button>
-                            <div className="h-36 overflow-hidden">
+                            <div className="h-48 overflow-hidden"> {/* ← 이미지 크기 확대 */}
                               <img
                                 src={page.imageUrl || "/placeholder.svg"}
                                 alt={page.description}
                                 className="w-full h-full object-cover"
                               />
                             </div>
-                            <div className="p-3">
+                            <div className="p-5"> {/* ← 여백 확대 */}
                               <div className="flex flex-wrap gap-1 mb-1">
                                 {page.tags.map((tag) => (
                                   <span
                                     key={tag}
-                                    className="px-2 py-0.5 bg-amber-100 text-amber-800 text-xs rounded-full"
+                                    className="px-2 py-0.5 bg-orange-100 text-rose-700 text-xs rounded-full"
                                   >
                                     {tag}
                                   </span>
                                 ))}
                               </div>
-                              <p className="text-amber-900 font-medium truncate">
+                              <p className="text-rose-900 font-medium truncate">
                                 {page.description}
                               </p>
-                              <p className="text-amber-700 text-sm mt-1 line-clamp-2">
+                              <p className="text-orange-700 text-sm mt-1 line-clamp-2">
                                 {page.content}
                               </p>
                             </div>
@@ -177,7 +177,7 @@ export default function ViewChapter() {
                         >
                           <button
                             onClick={() => addPage(index + 1)}
-                            className="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center hover:bg-amber-500 transition-colors"
+                            className="w-8 h-8 rounded-full bg-rose-400 text-white flex items-center justify-center hover:bg-orange-300 transition-colors"
                             aria-label={`Add page after ${page.id}`}
                           >
                             <PlusCircle size={16} />
@@ -188,10 +188,11 @@ export default function ViewChapter() {
                   ))}
                 </div>
 
+
                 <div className="flex items-center justify-center w-16 ml-12">
                   <button
                     onClick={() => addPage(pages.length)}
-                    className="w-10 h-10 rounded-full bg-amber-600 text-white flex items-center justify-center hover:bg-amber-500 transition-colors"
+                    className="w-10 h-10 rounded-full bg-rose-400 text-white flex items-center justify-center hover:bg-orange-300 transition-colors"
                     aria-label="Add page at end"
                   >
                     <PlusCircle size={24} />

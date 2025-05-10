@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight, Home } from "lucide-react"
 import Header from "@/components/header"
-import UserHeader from "@/components/user-header"
 
 interface Page {
   id: string
@@ -111,17 +110,17 @@ export default function Memoir() {
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <main className="flex-1 p-4 bg-gradient-to-b from-amber-50 to-amber-100 flex flex-col items-center">
+      <main className="flex-1 p-4 bg-gradient-to-b from-rose-50 to-orange-50 flex flex-col items-center">
         <div className="w-full max-w-7xl mx-auto mt-12 mb-2 flex justify-between items-center">
           <Button
             onClick={() => router.push("/my-page")}
             variant="outline"
-            className="border-amber-600 text-amber-800 hover:bg-amber-100"
+            className="border-rose-600 text-rose-800 hover:bg-orange-100"
           >
             <Home size={16} className="mr-2" />
             돌아가기
           </Button>
-          <h1 className="text-3xl font-bold text-amber-900">나의 회고록</h1>
+          <h1 className="text-3xl font-bold text-rose-900">나의 회고록</h1>
           <div className="w-[100px]"></div> {/* 균형을 위한 빈 공간 */}
         </div>
 
@@ -136,8 +135,8 @@ export default function Memoir() {
                 {leftPage && (
                   <div className="left-page-content">
                     <div className="page-header">
-                      <h2 className="text-xl font-semibold text-amber-900">{leftPage.chapterTitle}</h2>
-                      <p className="text-sm text-amber-700">{leftPage.description}</p>
+                      <h2 className="text-xl font-semibold text-rose-900">{leftPage.chapterTitle}</h2>
+                      <p className="text-sm text-orange-700">{leftPage.description}</p>
                     </div>
 
                     <div className="page-image-container">
@@ -158,8 +157,8 @@ export default function Memoir() {
                 {rightPage && (
                   <div className="right-page-content">
                     <div className="page-header">
-                      <h2 className="text-xl font-semibold text-amber-900">{rightPage.chapterTitle}</h2>
-                      <p className="text-sm text-amber-700">{rightPage.description}</p>
+                      <h2 className="text-xl font-semibold text-rose-900">{rightPage.chapterTitle}</h2>
+                      <p className="text-sm text-orange-700">{rightPage.description}</p>
                     </div>
 
                     <div className="page-image-container">
@@ -206,7 +205,7 @@ export default function Memoir() {
           </div>
         </div>
 
-        <div className="mt-4 text-center text-amber-800">
+        <div className="mt-4 text-center text-rose-800">
           <p>
             페이지 {currentPageIndex + 1}-{Math.min(currentPageIndex + 2, pages.length)} / 총 {pages.length}페이지
           </p>
@@ -276,7 +275,7 @@ export default function Memoir() {
           display: flex;
           flex-direction: column;
           scrollbar-width: thin;
-          scrollbar-color: rgba(139, 69, 19, 0.3) transparent;
+          scrollbar-color: rgba(225, 29, 72, 0.3) transparent;
         }
         
         .left-page-content::-webkit-scrollbar,
@@ -286,7 +285,7 @@ export default function Memoir() {
         
         .left-page-content::-webkit-scrollbar-thumb,
         .right-page-content::-webkit-scrollbar-thumb {
-          background-color: rgba(139, 69, 19, 0.3);
+          background-color: rgba(225, 29, 72, 0.3);
           border-radius: 2px;
         }
         
@@ -301,7 +300,7 @@ export default function Memoir() {
         .page-header {
           margin-bottom: 20px;
           padding-bottom: 10px;
-          border-bottom: 1px solid rgba(139, 69, 19, 0.2);
+          border-bottom: 1px solid rgba(225, 29, 72, 0.2);
         }
         
         .page-image-container {
@@ -323,7 +322,7 @@ export default function Memoir() {
           font-family: serif;
           font-size: 1rem;
           line-height: 1.6;
-          color: #5D4037;
+          color: #000000;
           white-space: pre-line;
           text-align: justify;
         }
@@ -331,7 +330,7 @@ export default function Memoir() {
         .page-number {
           align-self: center;
           font-size: 0.9rem;
-          color: #8B4513;
+          color: #000000;
           margin-top: 20px;
           font-style: italic;
         }
@@ -383,9 +382,9 @@ export default function Memoir() {
         }
         
         .nav-button {
-          background-color: rgba(255, 248, 225, 0.7);
-          border: 1px solid #D4A76A;
-          color: #8B4513;
+          background-color: rgba(255, 237, 213, 0.7);
+          border: 1px solid #FB923C;
+          color: #E11D48;
           width: 60px;
           height: 60px;
           border-radius: 50%;
@@ -398,7 +397,7 @@ export default function Memoir() {
         }
         
         .nav-button:hover:not(:disabled) {
-          background-color: rgba(212, 167, 106, 0.3);
+          background-color: rgba(251, 146, 60, 0.3);
         }
         
         .nav-button:disabled {
