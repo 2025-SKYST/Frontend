@@ -75,7 +75,6 @@ export default function MemoirTimeline() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <UserHeader />
 
       <main className="flex-1 p-6 bg-gradient-to-b from-amber-50 to-amber-100">
         <div className="max-w-6xl mx-auto mb-8">
@@ -118,7 +117,9 @@ export default function MemoirTimeline() {
                       className="grid gap-8 justify-center mx-auto"
                       style={{
                         display: "inline-grid",
-                        gridTemplateColumns: `repeat(${chapters.length * 2 - 1}, 1fr)`,
+                        gridTemplateColumns: `repeat(${
+                          chapters.length * 2 - 1
+                        }, 1fr)`,
                         alignItems: "center",
                       }}
                     >
@@ -128,10 +129,15 @@ export default function MemoirTimeline() {
                             <div className="absolute bottom-4 left-4 w-full h-full bg-white rounded-lg shadow-md"></div>
                             <div className="absolute bottom-2 left-2 w-full h-full bg-white rounded-lg shadow-md"></div>
 
-                            <Link href={`/chapter/${chapter.id}`} className="relative w-full z-10 group">
+                            <Link
+                              href={`/chapter/${chapter.id}`}
+                              className="relative w-full z-10 group"
+                            >
                               <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition-shadow">
                                 <button
-                                  onClick={(e) => handleDeleteClick(chapter.id, e)}
+                                  onClick={(e) =>
+                                    handleDeleteClick(chapter.id, e)
+                                  }
                                   className="absolute top-2 right-2 w-7 h-7 bg-white/80 hover:bg-red-100 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 text-red-500 hover:text-red-600"
                                   aria-label="챕터 삭제"
                                 >
@@ -197,17 +203,24 @@ export default function MemoirTimeline() {
         )}
       </main>
 
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>챕터 삭제</AlertDialogTitle>
             <AlertDialogDescription>
-              이 챕터를 정말 삭제하시겠습니까? 챕터에 포함된 모든 페이지가 함께 삭제되며, 이 작업은 되돌릴 수 없습니다.
+              이 챕터를 정말 삭제하시겠습니까? 챕터에 포함된 모든 페이지가 함께
+              삭제되며, 이 작업은 되돌릴 수 없습니다.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>취소</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
               삭제
             </AlertDialogAction>
           </AlertDialogFooter>
