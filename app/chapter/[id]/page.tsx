@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import React, { useState } from "react"
-import Link from "next/link"
-import { useRouter, useParams } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { PlusCircle, ArrowLeft, Trash2 } from "lucide-react"
-import Header from "@/components/header"
-import UserHeader from "@/components/user-header"
+import React, { useState } from "react";
+import Link from "next/link";
+import { useRouter, useParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { PlusCircle, ArrowLeft, Trash2 } from "lucide-react";
+import Header from "@/components/header";
+import UserHeader from "@/components/user-header";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,70 +16,73 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
 
 interface Page {
-  id: string
-  imageUrl: string
-  tags: string[]
-  description: string
-  content: string
+  id: string;
+  imageUrl: string;
+  tags: string[];
+  description: string;
+  content: string;
 }
 
 export default function ViewChapter() {
-  const router = useRouter()
-  const params = useParams()
-  const chapterId = params?.id as string
+  const router = useRouter();
+  const params = useParams();
+  const chapterId = params?.id as string;
 
-  const [chapterTitle] = useState("어린 시절의 추억")
+  const [chapterTitle] = useState("어린 시절의 추억");
   const [pages, setPages] = useState<Page[]>([
     {
       id: "1",
       imageUrl: "/childhood-playground.png",
       tags: ["어린시절", "놀이터", "친구"],
       description: "동네 놀이터에서 친구들과 놀던 기억",
-      content: "작은 동네 놀이터에서 친구들과 함께 보낸 시간은 내 어린 시절의 가장 소중한 추억이다...",
+      content:
+        "작은 동네 놀이터에서 친구들과 함께 보낸 시간은 내 어린 시절의 가장 소중한 추억이다...",
     },
     {
       id: "2",
       imageUrl: "/family-dinner.png",
       tags: ["가족", "저녁식사", "대화"],
       description: "가족과 함께한 저녁 식사 시간",
-      content: "매일 저녁 온 가족이 모여 식사를 하던 시간은 하루 중 가장 행복한 순간이었다...",
+      content:
+        "매일 저녁 온 가족이 모여 식사를 하던 시간은 하루 중 가장 행복한 순간이었다...",
     },
-  ])
+  ]);
 
-  const [deletePageId, setDeletePageId] = useState<string | null>(null)
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [deletePageId, setDeletePageId] = useState<string | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const addPage = (index: number) => {
-    router.push(`/chapter/${chapterId}/add-page`)
-  }
+    router.push(`/chapter/${chapterId}/add-page`);
+  };
 
   const handleDeleteClick = (pageId: string, e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setDeletePageId(pageId)
-    setIsDeleteDialogOpen(true)
-  }
+    e.preventDefault();
+    e.stopPropagation();
+    setDeletePageId(pageId);
+    setIsDeleteDialogOpen(true);
+  };
 
   const confirmDelete = () => {
     if (deletePageId) {
-      setPages(pages.filter((page) => page.id !== deletePageId))
-      setDeletePageId(null)
-      setIsDeleteDialogOpen(false)
+      setPages(pages.filter((page) => page.id !== deletePageId));
+      setDeletePageId(null);
+      setIsDeleteDialogOpen(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <UserHeader />
 
       <main className="flex-1 p-6 bg-gradient-to-b from-amber-50 to-amber-100">
         <div className="max-w-6xl mx-auto mb-8">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-amber-900">{chapterTitle}</h1>
+            <h1 className="text-3xl font-bold text-amber-900">
+              {chapterTitle}
+            </h1>
             <Link href="/my-page">
               <Button variant="ghost" className="ml-4">
                 돌아가기
@@ -126,7 +129,10 @@ export default function ViewChapter() {
                   {pages.map((page, index) => (
                     <React.Fragment key={`pair-${page.id}`}>
                       <div className="flex flex-col items-center justify-center">
-                        <Link href={`/chapter/${chapterId}/edit/${page.id}`} className="w-64 relative group">
+                        <Link
+                          href={`/chapter/${chapterId}/edit/${page.id}`}
+                          className="w-64 relative group"
+                        >
                           <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                             <button
                               onClick={(e) => handleDeleteClick(page.id, e)}
@@ -145,20 +151,30 @@ export default function ViewChapter() {
                             <div className="p-3">
                               <div className="flex flex-wrap gap-1 mb-1">
                                 {page.tags.map((tag) => (
-                                  <span key={tag} className="px-2 py-0.5 bg-amber-100 text-amber-800 text-xs rounded-full">
+                                  <span
+                                    key={tag}
+                                    className="px-2 py-0.5 bg-amber-100 text-amber-800 text-xs rounded-full"
+                                  >
                                     {tag}
                                   </span>
                                 ))}
                               </div>
-                              <p className="text-amber-900 font-medium truncate">{page.description}</p>
-                              <p className="text-amber-700 text-sm mt-1 line-clamp-2">{page.content}</p>
+                              <p className="text-amber-900 font-medium truncate">
+                                {page.description}
+                              </p>
+                              <p className="text-amber-700 text-sm mt-1 line-clamp-2">
+                                {page.content}
+                              </p>
                             </div>
                           </div>
                         </Link>
                       </div>
 
                       {index < pages.length - 1 && (
-                        <div key={`add-${page.id}`} className="flex items-center justify-center">
+                        <div
+                          key={`add-${page.id}`}
+                          className="flex items-center justify-center"
+                        >
                           <button
                             onClick={() => addPage(index + 1)}
                             className="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center hover:bg-amber-500 transition-colors"
@@ -187,7 +203,10 @@ export default function ViewChapter() {
         )}
       </main>
 
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>페이지 삭제</AlertDialogTitle>
@@ -197,12 +216,15 @@ export default function ViewChapter() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>취소</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
               삭제
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </div>
-  )
+  );
 }

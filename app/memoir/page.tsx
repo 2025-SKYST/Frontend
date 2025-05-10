@@ -110,7 +110,6 @@ export default function Memoir() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <UserHeader />
 
       <main className="flex-1 p-4 bg-gradient-to-b from-amber-50 to-amber-100 flex flex-col items-center">
         <div className="w-full max-w-7xl mx-auto mt-12 mb-2 flex justify-between items-center">
