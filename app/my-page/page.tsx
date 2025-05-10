@@ -107,7 +107,9 @@ export default function MemoirTimeline() {
                     <div
                       className="flex-grow grid gap-8"
                       style={{
-                        gridTemplateColumns: `repeat(${chapters.length * 2 - 1}, 1fr)`,
+                        gridTemplateColumns: `repeat(${
+                          chapters.length * 2 - 1
+                        }, 1fr)`,
                         alignItems: "center",
                       }}
                     >
