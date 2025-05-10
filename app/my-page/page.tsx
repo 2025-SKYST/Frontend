@@ -1,4 +1,4 @@
-// app/memoir-timeline/page.tsx (또는 pages/memoir-timeline.tsx)
+// app/memoir-timeline/page.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -17,10 +17,14 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
 
 import { useAuth } from "@/hooks/useAuth";
-import { getChapters, Chapter as ApiChapter } from "@/lib/chapterService";
+import {
+  getChapters,
+  createChapter,
+  Chapter as ApiChapter,
+} from "@/lib/chapterService";
 
 export default function MemoirTimeline() {
   const router = useRouter();
@@ -50,17 +54,19 @@ export default function MemoirTimeline() {
     })();
   }, [getAuthHeader]);
 
-  const addChapter = (index: number) => {
-    // 임시 추가 (API 미연동 가정)
-    const newChapter: ApiChapter = {
-      id: Date.now(),
-      chapter_name: "새 챕터",
-      prologue: "",
-      epilogue: "",
-    };
-    const updated = [...chapters];
-    updated.splice(index, 0, newChapter);
-    setChapters(updated);
+  // 실제 API 연동하여 챕터 생성 후 state 업데이트
+  const addChapter = async (index: number) => {
+    try {
+      const newCh = await createChapter("새 챕터", getAuthHeader());
+      setChapters(prev => {
+        const updated = [...prev];
+        updated.splice(index, 0, newCh);
+        return updated;
+      });
+    } catch (err: any) {
+      console.error("챕터 생성 실패:", err);
+      alert(`챕터 생성 실패: ${err.message}`);
+    }
   };
 
   const handleDeleteClick = (chapterId: number, e: React.MouseEvent) => {
@@ -76,7 +82,7 @@ export default function MemoirTimeline() {
       setDeleteChapterId(null);
       setIsDeleteDialogOpen(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -195,7 +201,9 @@ export default function MemoirTimeline() {
 
         <div className="text-center mt-12">
           <Link href="/memoir">
-            <Button className="bg-rose-800 hover:bg-rose-700 text-white px-8 py-6 text-lg">전체 회고록 보기</Button>
+            <Button className="bg-rose-800 hover:bg-rose-700 text-white px-8 py-6 text-lg">
+              전체 회고록 보기
+            </Button>
           </Link>
         </div>
       </main>
@@ -217,5 +225,5 @@ export default function MemoirTimeline() {
         </AlertDialogContent>
       </AlertDialog>
     </div>
-  )
+  );
 }
