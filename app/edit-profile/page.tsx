@@ -208,7 +208,7 @@ export default function MemoirTimeline() {
                                 className="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center hover:bg-amber-500 transition-colors"
                                 aria-label={`Add chapter after ${chapter.title}`}
                               >
-                                <PlusCircle size={16} />
+                                <PlusCircle size={24} />
                               </button>
                             </div>
                           )}

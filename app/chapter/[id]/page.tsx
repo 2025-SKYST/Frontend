@@ -96,9 +96,11 @@ export default function ViewChapter() {
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold text-rose-900">{chapterTitle}</h1>
             <Link href="/my-page">
-              <Button variant="ghost" className="ml-4">
+              <Button variant="outline"
+            className="border-rose-600 text-rose-800 hover:bg-orange-100">
+              
                 돌아가기
-                <ArrowLeft className="ml-2" size={16} />
+                <ArrowLeft className="ml" size={16} />
               </Button>
             </Link>
           </div>
@@ -187,10 +189,10 @@ export default function ViewChapter() {
                         <div className="flex items-center justify-center">
                           <button
                             onClick={() => addPage(index + 1)}
-                            className="w-8 h-8 rounded-full bg-rose-400 text-white flex items-center justify-center hover:bg-orange-300 transition-colors"
+                            className="w-10 h-10 rounded-full bg-rose-400 text-white flex items-center justify-center hover:bg-orange-300 transition-colors"
                             aria-label={`Add page after ${page.id}`}
                           >
-                            <PlusCircle size={16} />
+                            <PlusCircle size={24} />
                           </button>
                         </div>
                       )}

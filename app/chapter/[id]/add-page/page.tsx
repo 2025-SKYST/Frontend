@@ -132,7 +132,7 @@ export default function AddImage({ params }: { params: { id: string } }) {
                       onClick={addTag}
                       className="ml-2 bg-rose-600 hover:bg-rose-500"
                     >
-                      <Plus size={16} />
+                      <Plus size={24} />
                     </Button>
                   </div>
                   {tags.length > 0 && (
