@@ -70,7 +70,6 @@ export default function MemoirTimeline() {
         {/* Header section constrained */}
         <div className="max-w-6xl mx-auto mb-8">
           <div className="flex items-center">
-            <Link href="/my-page"></Link>
             <h1 className="text-3xl font-bold text-amber-900">챕터 목록</h1>
           </div>
         </div>
@@ -108,9 +107,7 @@ export default function MemoirTimeline() {
                     <div
                       className="flex-grow grid gap-8"
                       style={{
-                        gridTemplateColumns: `repeat(${
-                          chapters.length * 2 - 1
-                        }, 1fr)`,
+                        gridTemplateColumns: `repeat(${chapters.length * 2 - 1}, 1fr)`,
                         alignItems: "center",
                       }}
                     >
@@ -118,13 +115,17 @@ export default function MemoirTimeline() {
                         <>
                           <div
                             key={`chapter-${chapter.id}`}
-                            className="flex flex-col items-center justify-center"
+                            className="relative w-64 flex flex-col items-center justify-center"
                           >
+                            {/* Stacked background cards: offset to top-right */}
+                            <div className="absolute bottom-4 left-4 w-full h-full bg-white rounded-lg shadow-md"></div>
+                            <div className="absolute bottom-2 left-2 w-full h-full bg-white rounded-lg shadow-md"></div>
+
                             <Link
                               href={`/chapter/${chapter.id}`}
-                              className="w-64"
+                              className="relative w-full z-10"
                             >
-                              <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                              <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition-shadow">
                                 <div className="h-36 overflow-hidden">
                                   <img
                                     src={chapter.imageUrl || "/placeholder.svg"}
