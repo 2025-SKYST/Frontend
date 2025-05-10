@@ -41,6 +41,8 @@ export default function AddPage({ params }: { params: { id: string } }) {
     setTags(tags.filter((tag) => tag !== tagToRemove))
   }
 
+  // hi
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       e.preventDefault()
