@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import Header from '@/components/header';
+//import Header from '@/components/header';
 
 export default function Home() {
   const router = useRouter();
@@ -42,7 +42,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      {/*<Header />*/}
 
       <main
         className="relative flex-1 overflow-hidden"
@@ -50,7 +50,7 @@ export default function Home() {
           perspective: 1200,
           backgroundImage: "url('/combined-bg.jpg')",
           backgroundSize: 'cover',
-          backgroundPosition: 'center 40%',
+          backgroundPosition: 'center 39%',
         }}
       >
         {/* 1) 문 위치 고정 Wrapper */}
