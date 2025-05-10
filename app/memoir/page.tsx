@@ -215,346 +215,373 @@ export default function Memoir() {
       </main>
 
       <style jsx global>{`
-        /* 책 외부 래퍼 스타일 */
-        .book-outer-wrapper {
-          width: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          padding: 0;
-        }
-        
-        /* 책 래퍼 스타일 */
-        .book-wrapper {
-          position: relative;
-          width: 100%;
-          max-width: 1400px;
-          height: 95vh;
-          max-height: 1200px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          margin: 0 auto;
-        }
-        
-        /* 책 컨테이너 스타일 */
-        .book-container {
-          position: relative;
-          width: 100%;
-          height: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          perspective: 1500px;
-          transition: transform 0.5s;
-        }
-        
-        .book-background {
-          position: relative;
-          width: 100%;
-          height: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-        
-        .book-image {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-        
-        /* 페이지 콘텐츠 스타일 */
-        .left-page-content,
-        .right-page-content {
-          position: absolute;
-          width: 38%;
-          height: 72%;
-          top: 14%;
-          z-index: 2;
-          overflow-y: auto;
-          padding: 30px;
-          display: flex;
-          flex-direction: column;
-          scrollbar-width: thin;
-          scrollbar-color: rgba(139, 69, 19, 0.3) transparent;
-        }
-        
-        .left-page-content::-webkit-scrollbar,
-        .right-page-content::-webkit-scrollbar {
-          width: 4px;
-        }
-        
-        .left-page-content::-webkit-scrollbar-thumb,
-        .right-page-content::-webkit-scrollbar-thumb {
-          background-color: rgba(139, 69, 19, 0.3);
-          border-radius: 2px;
-        }
-        
-        .left-page-content {
-          left: 11.5%;
-        }
-        
-        .right-page-content {
-          right: 11.5%;
-        }
-        
-        .page-header {
-          margin-bottom: 20px;
-          padding-bottom: 10px;
-          border-bottom: 1px solid rgba(139, 69, 19, 0.2);
-        }
-        
-        .page-image-container {
-          margin-bottom: 20px;
-          display: flex;
-          justify-content: center;
-        }
-        
-        .page-image {
-          width: 100%;
-          max-height: 200px;
-          object-fit: contain;
-          border-radius: 5px;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        
-        .page-content {
-          flex: 1;
-          font-family: serif;
-          font-size: 1rem;
-          line-height: 1.6;
-          color: #5D4037;
-          white-space: pre-line;
-          text-align: justify;
-        }
-        
-        .page-number {
-          align-self: center;
-          font-size: 0.9rem;
-          color: #8B4513;
-          margin-top: 20px;
-          font-style: italic;
-        }
-        
-        /* 페이지 넘김 효과 */
-        .page-flip-effect {
-          position: absolute;
-          width: 38%;
-          height: 72%;
-          top: 14%;
-          right: 11.5%;
-          background-color: rgba(255, 255, 255, 0.9);
-          transform-origin: left center;
-          transform: rotateY(0deg);
-          transition: transform 0.5s ease-in-out;
-          backface-visibility: hidden;
-          z-index: 3;
-          opacity: 0;
-          pointer-events: none;
-        }
-        
-        .flipping.next .page-flip-effect {
-          opacity: 1;
-          transform: rotateY(-180deg);
-        }
-        
-        .flipping.prev .page-flip-effect {
-          opacity: 1;
-          transform: rotateY(180deg);
-          right: auto;
-          left: 11.5%;
-          transform-origin: right center;
-        }
-        
-        /* 네비게이션 버튼 */
-        .navigation-buttons {
-          position: absolute;
-          width: 120%;
-          display: flex;
-          justify-content: space-between;
-          top: 50%;
-          transform: translateY(-50%);
-          z-index: 10;
-          pointer-events: none;
-        }
-        
-        .nav-button {
-          background-color: rgba(255, 248, 225, 0.7);
-          border: 1px solid #D4A76A;
-          color: #8B4513;
-          width: 60px;
-          height: 60px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          transition: all 0.3s;
-          pointer-events: auto;
-        }
-        
-        .nav-button:hover:not(:disabled) {
-          background-color: rgba(212, 167, 106, 0.3);
-        }
-        
-        .nav-button:disabled {
-          opacity: 0.3;
-          cursor: not-allowed;
-        }
-        
-        /* 반응형 스타일 */
-        @media (max-width: 1400px) {
-          .book-wrapper {
-            max-width: 95%;
-            height: 80vh;
-          }
-        }
-        
-        @media (max-width: 1200px) {
-          .book-wrapper {
-            height: 75vh;
-          }
-          
-          .left-page-content,
-          .right-page-content {
-            padding: 25px;
-          }
-        }
-        
-        @media (max-width: 992px) {
-          .book-wrapper {
-            height: 70vh;
-          }
-          
-          .left-page-content,
-          .right-page-content {
-            padding: 20px;
-            width: 37%;
-          }
-          
-          .page-content {
-            font-size: 0.95rem;
-          }
-          
-          .left-page-content {
-            left: 12%;
-          }
-          
-          .right-page-content {
-            right: 12%;
-          }
-          
-          .page-flip-effect {
-            width: 37%;
-            left: 12%;
-          }
-        }
-        
-        @media (max-width: 768px) {
-          .book-wrapper {
-            height: 60vh;
-          }
-          
-          .left-page-content,
-          .right-page-content {
-            padding: 15px;
-            width: 36%;
-            height: 70%;
-            top: 15%;
-          }
-          
-          .left-page-content {
-            left: 13%;
-          }
-          
-          .right-page-content {
-            right: 13%;
-          }
-          
-          .page-content {
-            font-size: 0.85rem;
-          }
-          
-          .page-image {
-            max-height: 150px;
-          }
-          
-          .page-flip-effect {
-            width: 36%;
-            height: 70%;
-            top: 15%;
-            right: 13%;
-          }
-          
-          .flipping.prev .page-flip-effect {
-            left: 13%;
-          }
-          
-          .nav-button {
-            width: 50px;
-            height: 50px;
-          }
-        }
-        
-        @media (max-width: 576px) {
-          .book-wrapper {
-            height: 50vh;
-          }
-          
-          .left-page-content,
-          .right-page-content {
-            padding: 10px;
-            width: 35%;
-            height: 68%;
-            top: 16%;
-          }
-          
-          .left-page-content {
-            left: 14%;
-          }
-          
-          .right-page-content {
-            right: 14%;
-          }
-          
-          .page-header h2 {
-            font-size: 0.9rem;
-          }
-          
-          .page-header p {
-            font-size: 0.7rem;
-          }
-          
-          .page-content {
-            font-size: 0.75rem;
-          }
-          
-          .page-image {
-            max-height: 100px;
-          }
-          
-          .page-number {
-            font-size: 0.7rem;
-          }
-          
-          .page-flip-effect {
-            width: 35%;
-            height: 68%;
-            top: 16%;
-            right: 14%;
-          }
-          
-          .flipping.prev .page-flip-effect {
-            left: 14%;
-          }
-          
-          .nav-button {
-            width: 40px;
-            height: 40px;
-          }
-        }
-      `}</style>
+  /* 책 외부 래퍼 스타일 */
+  .book-outer-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+  }
+  
+  /* 책 래퍼 스타일 */
+  .book-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 1600px;
+    height: 90vh;
+    max-height: 1200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+  }
+  
+  /* 책 컨테이너 스타일 */
+  .book-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1500px;
+    transition: transform 0.5s;
+  }
+  
+  .book-background {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .book-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+  }
+  
+  /* 페이지 콘텐츠 스타일 */
+  .left-page-content,
+  .right-page-content {
+    position: absolute;
+    width: 38%;
+    height: 74%;
+    top: 13%;
+    z-index: 2;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  
+  .left-page-content {
+    left: 11.5%;
+  }
+  
+  .right-page-content {
+    right: 11.5%;
+  }
+  
+  .page-header {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(139, 69, 19, 0.2);
+  }
+  
+  .page-image-container {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .page-image {
+    width: 100%;
+    max-height: 180px;
+    object-fit: contain;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .page-content {
+    flex: 1;
+    font-family: serif;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #5D4037;
+    white-space: pre-line;
+    text-align: justify;
+    display: -webkit-box;
+    -webkit-line-clamp: 15;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .page-number {
+    align-self: center;
+    font-size: 0.9rem;
+    color: #8B4513;
+    margin-top: 15px;
+    font-style: italic;
+  }
+  
+  /* 페이지 넘김 효과 */
+  .page-flip-effect {
+    position: absolute;
+    width: 38%;
+    height: 74%;
+    top: 13%;
+    right: 11.5%;
+    background-color: rgba(255, 255, 255, 0.9);
+    transform-origin: left center;
+    transform: rotateY(0deg);
+    transition: transform 0.5s ease-in-out;
+    backface-visibility: hidden;
+    z-index: 3;
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  .flipping.next .page-flip-effect {
+    opacity: 1;
+    transform: rotateY(-180deg);
+  }
+  
+  .flipping.prev .page-flip-effect {
+    opacity: 1;
+    transform: rotateY(180deg);
+    right: auto;
+    left: 11.5%;
+    transform-origin: right center;
+  }
+  
+  /* 네비게이션 버튼 */
+  .navigation-buttons {
+    position: absolute;
+    width: 120%;
+    display: flex;
+    justify-content: space-between;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    pointer-events: none;
+  }
+  
+  .nav-button {
+    background-color: rgba(255, 248, 225, 0.7);
+    border: 1px solid #D4A76A;
+    color: #8B4513;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    pointer-events: auto;
+  }
+  
+  .nav-button:hover:not(:disabled) {
+    background-color: rgba(212, 167, 106, 0.3);
+  }
+  
+  .nav-button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  
+  /* 반응형 스타일 */
+  @media (max-width: 1600px) {
+    .book-wrapper {
+      max-width: 95%;
+      height: 85vh;
+    }
+    
+    .page-content {
+      font-size: 0.9rem;
+      -webkit-line-clamp: 14;
+    }
+  }
+  
+  @media (max-width: 1400px) {
+    .book-wrapper {
+      height: 80vh;
+    }
+    
+    .page-content {
+      font-size: 0.85rem;
+      -webkit-line-clamp: 13;
+    }
+  }
+  
+  @media (max-width: 1200px) {
+    .book-wrapper {
+      height: 75vh;
+    }
+    
+    .left-page-content,
+    .right-page-content {
+      padding: 25px;
+    }
+    
+    .page-content {
+      font-size: 0.8rem;
+      -webkit-line-clamp: 12;
+    }
+  }
+  
+  @media (max-width: 992px) {
+    .book-wrapper {
+      height: 70vh;
+    }
+    
+    .left-page-content,
+    .right-page-content {
+      padding: 20px;
+      width: 37%;
+    }
+    
+    .left-page-content {
+      left: 12%;
+    }
+    
+    .right-page-content {
+      right: 12%;
+    }
+    
+    .page-content {
+      font-size: 0.75rem;
+      -webkit-line-clamp: 11;
+    }
+    
+    .page-flip-effect {
+      width: 37%;
+      left: 12%;
+    }
+    
+    .nav-button {
+      width: 60px;
+      height: 60px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .book-wrapper {
+      height: 65vh;
+    }
+    
+    .left-page-content,
+    .right-page-content {
+      padding: 15px;
+      width: 36%;
+      height: 72%;
+      top: 14%;
+    }
+    
+    .left-page-content {
+      left: 13%;
+    }
+    
+    .right-page-content {
+      right: 13%;
+    }
+    
+    .page-content {
+      font-size: 0.7rem;
+      -webkit-line-clamp: 10;
+      line-height: 1.4;
+    }
+    
+    .page-image {
+      max-height: 120px;
+    }
+    
+    .page-flip-effect {
+      width: 36%;
+      height: 72%;
+      top: 14%;
+      right: 13%;
+    }
+    
+    .flipping.prev .page-flip-effect {
+      left: 13%;
+    }
+    
+    .nav-button {
+      width: 50px;
+      height: 50px;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .book-wrapper {
+      height: 60vh;
+    }
+    
+    .left-page-content,
+    .right-page-content {
+      padding: 10px;
+      width: 35%;
+      height: 70%;
+      top: 15%;
+    }
+    
+    .left-page-content {
+      left: 14%;
+    }
+    
+    .right-page-content {
+      right: 14%;
+    }
+    
+    .page-header h2 {
+      font-size: 0.8rem;
+    }
+    
+    .page-header p {
+      font-size: 0.65rem;
+    }
+    
+    .page-content {
+      font-size: 0.65rem;
+      -webkit-line-clamp: 9;
+      line-height: 1.3;
+    }
+    
+    .page-image {
+      max-height: 90px;
+    }
+    
+    .page-number {
+      font-size: 0.65rem;
+      margin-top: 10px;
+    }
+    
+    .page-flip-effect {
+      width: 35%;
+      height: 70%;
+      top: 15%;
+      right: 14%;
+    }
+    
+    .flipping.prev .page-flip-effect {
+      left: 14%;
+    }
+    
+    .nav-button {
+      width: 40px;
+      height: 40px;
+    }
+  }
+`}</style>
     </div>
   )
 }

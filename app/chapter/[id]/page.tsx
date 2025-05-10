@@ -84,14 +84,14 @@ export default function ViewChapter({ params }: { params: { id: string } }) {
       <main className="flex-1 p-6 bg-gradient-to-b from-amber-50 to-amber-100">
         {/* Header section constrained */}
         <div className="max-w-6xl mx-auto mb-8">
-          <div className="flex items-center">
+          <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-bold text-amber-900">{chapterTitle}</h1>
             <Link href="/my-page">
-              <Button variant="ghost" className="mr-4">
+              <Button variant="outline" className="border-amber-600 text-amber-800 hover:bg-amber-100">
                 <ArrowLeft className="mr-2" size={16} />
                 돌아가기
               </Button>
             </Link>
-            <h1 className="text-3xl font-bold text-amber-900">{chapterTitle}</h1>
           </div>
         </div>
 
