@@ -72,13 +72,13 @@ export default function SignUp() {
 
     const payload = {
       username: formData.name,
-      birth_year:  Number(formData.birthYear),
-      birth_month: Number(formData.birthMonth),
-      birth_day:   Number(formData.birthDay),
-      birth_hour:   Number(formData.birthHour),
-      birth_minute: Number(formData.birthMinute),
       login_id: formData.id,
       password: formData.password,
+      birth_year:  Number(formData.birthYear),
+      birth_month: Number(formData.birthMonth),
+      birth_date:   Number(formData.birthDay),
+      birth_hour:   Number(formData.birthHour),
+      birth_minute: Number(formData.birthMinute)
       // (필요하면 profileImage 등도)
     };
 

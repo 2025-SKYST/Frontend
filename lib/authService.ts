@@ -1,13 +1,17 @@
 // lib/authService.ts
 export interface SignUpPayload {
   username:     string
-  birth_year:   number
-  birth_month:  number
-  birth_day:    number
-  birth_hour:   number
-  birth_minute: number
   login_id:     string
   password:     string
+  birth_year:   number
+  birth_month:  number
+  birth_date:    number
+  birth_hour:   number
+  birth_minute: number
+}
+export interface SignInPayload {
+  email: string;
+  password: string;
 }
 
 export async function signUp(payload: SignUpPayload) {
@@ -24,19 +28,30 @@ export async function signUp(payload: SignUpPayload) {
   return res.json() as Promise<{ accessToken: string }>
 }
 
-export async function refreshAccessToken() {
+export async function signIn(payload: SignInPayload) {
+  const res = await fetch(
+    "https://api.memory123.store/api/users/signin",
+    { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }
+  );
+  if (!res.ok) throw new Error(`SignIn failed: ${res.status}`);
+  // { accessToken: string, refreshToken: string }
+  return res.json() as Promise<{ accessToken: string; refreshToken: string }>;
+}
+
+export async function refreshAccessToken(refreshToken: string) {
   const res = await fetch(
     "https://api.memory123.store/api/users/refresh",
     {
       method: "POST",
-      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken }),
     }
-  )
-  if (!res.ok) throw new Error(`Refresh failed: ${res.status}`)
-  return res.json() as Promise<{ accessToken: string }>
+  );
+  if (!res.ok) throw new Error(`Refresh failed: ${res.status}`);
+  return res.json() as Promise<{ accessToken: string; refreshToken?: string }>;
 }
 
 export function signOut() {
-  // 필요하다면 서버에 logout 요청을 추가
-  localStorage.removeItem("accessToken")
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
 }

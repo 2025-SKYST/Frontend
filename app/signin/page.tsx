@@ -1,18 +1,28 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
+import React, { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import Header from "@/components/header"
+
+import { signIn } from "@/lib/authService"
+import { useAuth } from "@/hooks/useAuth"
 
 export default function SignIn() {
   const router = useRouter()
+  const auth = useAuth()
+
   const [formData, setFormData] = useState({
     id: "",
     password: "",
@@ -23,11 +33,22 @@ export default function SignIn() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // 여기에 인증 로직 추가
-    console.log("로그인 시도:", formData)
-    router.push("/my-page")
+    try {
+      // 로그인 API 호출 (필드 이름은 email 이지만, id 입력값을 그대로 넘깁니다)
+      const { accessToken, refreshToken } = await signIn({
+        login_id: formData.id,
+        password: formData.password,
+      })
+      // context에 저장
+      auth.login(accessToken, refreshToken)
+      // 로그인 후 이동
+      router.push("/my-page")
+    } catch (err: any) {
+      console.error(err)
+      alert(err.message || "로그인에 실패했습니다.")
+    }
   }
 
   return (
@@ -37,7 +58,9 @@ export default function SignIn() {
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle className="text-2xl text-center">로그인</CardTitle>
-            <CardDescription className="text-center">나의 회고록 서비스에 로그인하세요.</CardDescription>
+            <CardDescription className="text-center">
+              나의 회고록 서비스에 로그인하세요.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
