@@ -119,7 +119,7 @@ export default function MemoirTimeline() {
                 >
                   {chapters.map((chapter, idx) => (
                     <React.Fragment key={chapter.id}>
-                      <div className="relative w-64 flex flex-col items-center justify-center">
+                      <div className="relative w-96 flex flex-col items-center justify-center">
                         <div className="absolute bottom-4 left-4 w-full h-full bg-white rounded-lg shadow-md"></div>
                         <div className="absolute bottom-2 left-2 w-full h-full bg-white rounded-lg shadow-md"></div>
 
@@ -138,14 +138,14 @@ export default function MemoirTimeline() {
                               <Trash2 size={14} />
                             </button>
 
-                            <div className="h-36 overflow-hidden">
+                            <div className="h-48 overflow-hidden">
                               <img
                                 src="/placeholder.svg"
                                 alt={chapter.chapter_name}
                                 className="w-full h-full object-cover"
                               />
                             </div>
-                            <div className="p-3">
+                            <div className="p-5">
                               <h3 className="font-medium text-amber-900 truncate">
                                 {chapter.chapter_name}
                               </h3>
