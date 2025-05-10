@@ -8,7 +8,6 @@ import Link from "next/link"
 import { PlusCircle, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Header from "@/components/header"
-import UserHeader from "@/components/user-header"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -108,7 +107,6 @@ export default function MemoirTimeline() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <UserHeader />
 
       <main
         className={`flex-1 p-6 bg-gradient-to-b from-amber-50 to-amber-100 transition-opacity duration-800 ${isTransitioning ? "opacity-0" : "opacity-100"}`}

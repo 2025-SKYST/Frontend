@@ -6,7 +6,6 @@ import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, ArrowLeft, Trash2 } from "lucide-react";
 import Header from "@/components/header";
-import UserHeader from "@/components/user-header";
 import {
   AlertDialog,
   AlertDialogAction,

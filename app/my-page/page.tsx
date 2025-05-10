@@ -7,7 +7,6 @@ import Link from "next/link";
 import { PlusCircle, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/header";
-import UserHeader from "@/components/user-header";
 import {
   AlertDialog,
   AlertDialogAction,
