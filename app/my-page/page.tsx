@@ -3,6 +3,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Header from "@/components/header";
+import UserHeader from "@/components/user-header";
 
 // Define the Chapter type
 interface Chapter {
@@ -59,7 +61,8 @@ export default function MemoirTimeline() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-amber-50 to-amber-100 p-6">
-      <h1 className="text-3xl font-bold text-amber-900 mb-8">나의 회고록</h1>
+      <Header />
+      <UserHeader />
 
       {/* If no chapters, show a central big plus */}
       {chapters.length === 0 ? (
