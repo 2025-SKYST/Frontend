@@ -12,6 +12,7 @@ import * as authService from "../lib/authService";
 interface AuthContextType {
   isAuthenticated: boolean;
   accessToken: string | null;
+  username: string | null;
   login: (accessToken: string, refreshToken: string) => void;
   logout: () => void;
   getAuthHeader: () => { Authorization: string } | {};
@@ -20,9 +21,9 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // 초기값은 null
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
+  const [username, setUsername] = useState<string | null>(null);
 
   // 클라이언트 마운트 후에만 localStorage에서 불러오기
   useEffect(() => {
@@ -79,6 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         isAuthenticated: !!accessToken,
         accessToken,
+        username,
         login,
         logout,
         getAuthHeader,

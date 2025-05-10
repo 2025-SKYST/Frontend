@@ -1,7 +1,19 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+"use client";
+
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "../hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
+  const { isAuthenticated, logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout();
+    router.push("/");
+  };
+
   return (
     <header className="w-full py-4 px-6 bg-amber-800 text-amber-50">
       <div className="container mx-auto flex justify-between items-center">
@@ -9,16 +21,33 @@ export default function Header() {
           나의 회고록
         </Link>
         <div className="space-x-2">
-          <Link href="/signin">
-            <Button variant="outline" className="text-amber-600 border-amber-50 hover:bg-amber-100">
-              로그인
+          {isAuthenticated ? (
+            <Button
+              variant="outline"
+              className="text-amber-600 border-amber-50 hover:bg-amber-100"
+              onClick={handleLogout}
+            >
+              로그아웃
             </Button>
-          </Link>
-          <Link href="/signup">
-            <Button className="bg-amber-600 hover:bg-amber-500 text-white">회원가입</Button>
-          </Link>
+          ) : (
+            <>
+              <Link href="/signin">
+                <Button
+                  variant="outline"
+                  className="text-amber-600 border-amber-50 hover:bg-amber-100"
+                >
+                  로그인
+                </Button>
+              </Link>
+              <Link href="/signup">
+                <Button className="bg-amber-600 hover:bg-amber-500 text-white">
+                  회원가입
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>
-  )
+  );
 }
