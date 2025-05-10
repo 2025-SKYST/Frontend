@@ -10,7 +10,7 @@ export interface SignUpPayload {
   birth_minute: number
 }
 export interface SignInPayload {
-  email: string;
+  login_id: string;
   password: string;
 }
 
