@@ -94,9 +94,12 @@ export default function ViewChapter() {
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold text-rose-900">{chapterTitle}</h1>
             <Link href="/my-page">
-              <Button variant="ghost" className="ml-4">
+              <Button
+                variant="outline"
+                className="border-rose-600 text-rose-800 hover:bg-orange-100"
+              >
                 돌아가기
-                <ArrowLeft className="ml-2" size={16} />
+                <ArrowLeft className="ml" size={16} />
               </Button>
             </Link>
           </div>
