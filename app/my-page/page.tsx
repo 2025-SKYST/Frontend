@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { DroppableProvided } from "react-beautiful-dnd";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { PlusCircle, Trash2 } from "lucide-react";
@@ -18,6 +19,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -25,6 +27,7 @@ import {
   createChapter,
   Chapter as ApiChapter,
 } from "@/lib/chapterService";
+
 
 export default function MemoirTimeline() {
   const router = useRouter();
@@ -69,6 +72,28 @@ export default function MemoirTimeline() {
     }
   };
 
+  // 드래그 종료 후 실행되는 함수
+  const onDragEnd = (result: DropResult) => {
+      // 드롭 위치가 없으면 아무것도 하지 않음
+      if (!result.destination) return;
+      
+      // 위치가 변경되지 않았으면 아무것도 하지 않음
+      if (
+        result.destination.index === result.source.index
+      ) return;
+      
+      // 챕터 배열의 순서 변경
+      const newChapters = Array.from(chapters);
+      const [removed] = newChapters.splice(result.source.index, 1);
+      newChapters.splice(result.destination.index, 0, removed);
+      
+      // 상태 업데이트
+      setChapters(newChapters);
+      
+      // 여기에 서버 API 호출하여 챕터 순서 업데이트 (선택적)
+      // updateChapterOrder(newChapters.map(ch => ch.id));
+  };
+
   const handleDeleteClick = (chapterId: number, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -107,95 +132,117 @@ export default function MemoirTimeline() {
           </div>
         ) : (
           <div className="w-full overflow-x-auto pb-8">
-            <div className="relative py-16 px-12 min-w-fit">
-              <div className="absolute left-12 right-12 top-1/2 h-1 bg-orange-200 transform -translate-y-1/2 z-0" />
+            <DragDropContext onDragEnd={onDragEnd}>
+              <div className="relative py-16 px-12 min-w-fit">
+                <div className="absolute left-12 right-12 top-1/2 h-1 bg-orange-200 transform -translate-y-1/2 z-0" />
 
-              <div className="relative z-10 flex items-center justify-center">
-                <div className="flex items-center justify-center w-16 mr-12">
-                  <button
-                    onClick={() => addChapter(0)}
-                    className="w-10 h-10 rounded-full bg-rose-400 text-white flex items-center justify-center hover:bg-orange-300 transition-colors"
-                    aria-label="Add chapter at beginning"
-                  >
-                    <PlusCircle size={24} />
-                  </button>
-                </div>
-
-                <div
-                  className="grid gap-8 justify-center mx-auto"
-                  style={{
-                    display: "inline-grid",
-                    gridTemplateColumns: `repeat(${
-                      chapters.length * 2 - 1
-                    }, 1fr)`,
-                    alignItems: "center",
-                  }}
-                >
-                  {chapters.map((chapter, idx) => (
-                    <React.Fragment key={chapter.id}>
-                      <div className="relative w-64 flex flex-col items-center justify-center">
-                        <div className="absolute bottom-4 left-4 w-full h-full bg-white rounded-lg shadow-md"></div>
-                        <div className="absolute bottom-2 left-2 w-full h-full bg-white rounded-lg shadow-md"></div>
-
-                        <Link
-                          href={`/chapter/${chapter.id}`}
-                          className="relative w-full z-10 group"
+                <Droppable droppableId="chapters" direction="horizontal" isDropDisabled={false}>
+                  {(provided) => (
+                    <div
+                      {...provided.droppableProps} 
+                      ref={provided.innerRef} 
+                      className="relative z-10 flex items-center justify-center"
+                    >
+                      <div className="flex items-center justify-center w-16 mr-12">
+                        <button
+                          onClick={() => addChapter(0)}
+                          className="w-10 h-10 rounded-full bg-rose-400 text-white flex items-center justify-center hover:bg-orange-300 transition-colors"
+                          aria-label="Add chapter at beginning"
                         >
-                          <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition-shadow">
-                            <button
-                              onClick={(e) =>
-                                handleDeleteClick(chapter.id, e)
-                              }
-                              className="absolute top-2 right-2 w-7 h-7 bg-white/80 hover:bg-red-100 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 text-red-500 hover:text-red-600"
-                              aria-label="챕터 삭제"
-                            >
-                              <Trash2 size={14} />
-                            </button>
-
-                            <div className="h-36 overflow-hidden">
-                              <img
-                                src="/placeholder.svg"
-                                alt={chapter.chapter_name}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                            <div className="p-3">
-                              <h3 className="font-medium text-amber-900 truncate">
-                                {chapter.chapter_name}
-                              </h3>
-                              <p className="text-xs text-amber-700 mt-1 line-clamp-2">
-                                {chapter.prologue}
-                              </p>
-                            </div>
-                          </div>
-                        </Link>
+                          <PlusCircle size={24} />
+                        </button>
                       </div>
 
-                      {idx < chapters.length - 1 && (
-                        <div className="flex items-center justify-center">
-                          <button
-                            onClick={() => addChapter(idx + 1)}
-                            className="w-10 h-10 rounded-full bg-rose-400 text-white flex items-center justify-center hover:bg-orange-300 transition-colors"
-                            aria-label={`Add chapter after ${chapter.chapter_name}`}
+                      <div
+                        className="grid gap-8 justify-center mx-auto"
+                        style={{
+                          display: "inline-grid",
+                          gridTemplateColumns: `repeat(${
+                            chapters.length * 2 - 1
+                          }, 1fr)`,
+                          alignItems: "center",
+                        }}
+                      >
+                        {chapters.map((chapter, idx) => (
+                          <Draggable 
+                            key={chapter.id.toString()} 
+                            draggableId={chapter.id.toString()} 
+                            index={idx}
                           >
-                            <PlusCircle size={16} />
-                          </button>
-                        </div>
-                      )}
-                    </React.Fragment>
-                  ))}
-                </div>
-                <div className="flex items-center justify-center w-16 ml-12">
-                  <button
-                    onClick={() => addChapter(chapters.length)}
-                    className="w-10 h-10 rounded-full bg-rose-400 text-white flex items-center justify-center hover:bg-orange-300 transition-colors"
-                    aria-label="Add chapter at end"
-                  >
-                    <PlusCircle size={24} />
-                  </button>
-                </div>
+                            {(provided: any) => (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                className="relative w-64 flex flex-col items-center justify-center"
+                              >
+                                <div className="absolute bottom-4 left-4 w-full h-full bg-white rounded-lg shadow-md"></div>
+                                <div className="absolute bottom-2 left-2 w-full h-full bg-white rounded-lg shadow-md"></div>
+
+                                <Link
+                                  href={`/chapter/${chapter.id}`}
+                                  className="relative w-full z-10 group"
+                                >
+                                  <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition-shadow">
+                                    <button
+                                      onClick={(e) =>
+                                        handleDeleteClick(chapter.id, e)
+                                      }
+                                      className="absolute top-2 right-2 w-7 h-7 bg-white/80 hover:bg-red-100 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 text-red-500 hover:text-red-600"
+                                      aria-label="챕터 삭제"
+                                    >
+                                      <Trash2 size={14} />
+                                    </button>
+
+                                    <div className="h-36 overflow-hidden">
+                                      <img
+                                        src="/placeholder.svg"
+                                        alt={chapter.chapter_name}
+                                        className="w-full h-full object-cover"
+                                      />
+                                    </div>
+                                    <div className="p-3">
+                                      <h3 className="font-medium text-amber-900 truncate">
+                                        {chapter.chapter_name}
+                                      </h3>
+                                      <p className="text-xs text-amber-700 mt-1 line-clamp-2">
+                                        {chapter.prologue}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </Link>
+
+                                {idx < chapters.length - 1 && (
+                                  <div className="flex items-center justify-center">
+                                    <button
+                                      onClick={() => addChapter(idx + 1)}
+                                      className="w-10 h-10 rounded-full bg-rose-400 text-white flex items-center justify-center hover:bg-orange-300 transition-colors"
+                                      aria-label={`Add chapter after ${chapter.chapter_name}`}
+                                    >
+                                      <PlusCircle size={16} />
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </Draggable>
+                        ))}
+                        {provided.placeholder}
+                      </div>
+                      <div className="flex items-center justify-center w-16 ml-12">
+                        <button
+                          onClick={() => addChapter(chapters.length)}
+                          className="w-10 h-10 rounded-full bg-rose-400 text-white flex items-center justify-center hover:bg-orange-300 transition-colors"
+                          aria-label="Add chapter at end"
+                        >
+                          <PlusCircle size={24} />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </Droppable>
               </div>
-            </div>
+            </DragDropContext>
           </div>
         )}
 
