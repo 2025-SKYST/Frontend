@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight, Home } from "lucide-react"
+import { toast } from "sonner"
+import { ChevronLeft, ChevronRight, Home, Share2Icon } from "lucide-react"
 import Header from "@/components/header"
 import { getChapters } from "@/lib/chapterService"
 import { Image, Chapter, getImages } from "@/lib/imageService"
@@ -137,8 +138,19 @@ export default function Memoir() {
             variant="outline"
             className="border-rose-600 text-rose-800 hover:bg-orange-100"
           >
-            <Home size={16} className="mr-2" />
+            <Share2Icon size={16} className="mr-2" />
             돌아가기
+          </Button>
+          <Button
+            onClick={() => {
+              navigator.clipboard.writeText("https://www.memory123.store/memoir");
+              toast.success("링크가 복사되었습니다!");
+            }}
+            variant="outline"
+            className="border-rose-600 text-rose-800 hover:bg-orange-100"
+          >
+            <Share2Icon size={16} className="mr-2" />
+            공유하기
           </Button>
           <h1 className="text-3xl font-bold text-rose-900">나의 회고록</h1>
           <div className="w-[100px]"></div>
