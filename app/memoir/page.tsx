@@ -4,10 +4,10 @@ import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { ChevronLeft, ChevronRight, Home, Share2Icon } from "lucide-react"
+import { ChevronLeft, ChevronRight, ArrowLeft, Share2Icon } from "lucide-react"
 import Header from "@/components/header"
 import { getChapters } from "@/lib/chapterService"
-import { Image, Chapter, getImages } from "@/lib/imageService"
+import { type Image, getImages } from "@/lib/imageService"
 import { useAuth } from "@/hooks/useAuth"
 
 interface MemoirPage extends Image {
@@ -31,33 +31,33 @@ export default function Memoir() {
   useEffect(() => {
     const fetchMemoir = async () => {
       try {
-        const authHeader = getAuthHeader();
-        const chaptersRes = await getChapters(authHeader);
-        const chapters = chaptersRes.chapters;
-        
+        const authHeader = getAuthHeader()
+        const chaptersRes = await getChapters(authHeader)
+        const chapters = chaptersRes.chapters
+
         // Fetch images for each chapter and convert to MemoirPage format
         const allPages = await Promise.all(
           chapters.map(async (chapter) => {
-            const imagesRes = await getImages(chapter.id, authHeader);
+            const imagesRes = await getImages(chapter.id, authHeader)
             return imagesRes.map((image: Image) => ({
               ...image,
               chapterTitle: chapter.chapter_name,
-              description: image.content || 'No description available'
-            }));
-          })
-        ).then((pagesArray) => pagesArray.flat());
+              description: image.content || "No description available",
+            }))
+          }),
+        ).then((pagesArray) => pagesArray.flat())
 
-        setPages(allPages);
-        setLoading(false);
+        setPages(allPages)
+        setLoading(false)
       } catch (err) {
-        console.error('Error fetching memoir:', err);
-        setError('Failed to load memoir. Please try again later.');
-        setLoading(false);
+        console.error("Error fetching memoir:", err)
+        setError("Failed to load memoir. Please try again later.")
+        setLoading(false)
       }
-    };
+    }
 
-    fetchMemoir();
-  }, []);
+    fetchMemoir()
+  }, [])
 
   useEffect(() => {
     if (bookRef.current) {
@@ -108,7 +108,7 @@ export default function Memoir() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-rose-50 to-orange-50">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
       </div>
-    );
+    )
   }
 
   if (error) {
@@ -116,15 +116,12 @@ export default function Memoir() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-rose-50 to-orange-50">
         <div className="text-center">
           <h2 className="text-red-500">{error}</h2>
-          <Button
-            onClick={() => window.location.reload()}
-            className="mt-4"
-          >
+          <Button onClick={() => window.location.reload()} className="mt-4">
             Retry
           </Button>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -138,30 +135,17 @@ export default function Memoir() {
             variant="outline"
             className="border-rose-600 text-rose-800 hover:bg-orange-100"
           >
-            <Share2Icon size={16} className="mr-2" />
             돌아가기
+            <ArrowLeft className="ml-2" size={16} />
           </Button>
-          <Button
-            onClick={() => {
-              navigator.clipboard.writeText("https://www.memory123.store/memoir");
-              toast.success("링크가 복사되었습니다!");
-            }}
-            variant="outline"
-            className="border-rose-600 text-rose-800 hover:bg-orange-100"
-          >
-            <Share2Icon size={16} className="mr-2" />
-            공유하기
-          </Button>
+          
           <h1 className="text-3xl font-bold text-rose-900">나의 회고록</h1>
           <div className="w-[100px]"></div>
         </div>
 
         <div className="book-outer-wrapper">
           <div className="book-wrapper">
-            <div
-              ref={bookRef}
-              className={`book-container ${isFlipping ? `flipping ${flipDirection}` : ""}`}
-            >
+            <div ref={bookRef} className={`book-container ${isFlipping ? `flipping ${flipDirection}` : ""}`}>
               <div className="book-background">
                 <img src="/book-template.png" alt="Book template" className="book-image" />
 
@@ -169,14 +153,9 @@ export default function Memoir() {
                   <div className="left-page-content">
                     <div className="page-header">
                       <h2 className="text-xl font-semibold text-rose-900">{leftPage.chapterTitle}</h2>
-                      <p className="text-sm text-orange-700">{leftPage.description}</p>
                     </div>
                     <div className="page-image-container">
-                      <img
-                        src={leftPage.file_url || "/placeholder.svg"}
-                        alt={leftPage.description}
-                        className="page-image"
-                      />
+                      <img src={leftPage.file_url || "/placeholder.svg"} alt="Page image" className="page-image" />
                     </div>
                     <div className="page-content">{leftPage.content}</div>
                     <div className="page-number">{visiblePages[0] + 1}</div>
@@ -187,14 +166,9 @@ export default function Memoir() {
                   <div className="right-page-content">
                     <div className="page-header">
                       <h2 className="text-xl font-semibold text-rose-900">{rightPage.chapterTitle}</h2>
-                      <p className="text-sm text-orange-700">{rightPage.description}</p>
                     </div>
                     <div className="page-image-container">
-                      <img
-                        src={rightPage.file_url || "/placeholder.svg"}
-                        alt={rightPage.description}
-                        className="page-image"
-                      />
+                      <img src={rightPage.file_url || "/placeholder.svg"} alt="Page image" className="page-image" />
                     </div>
                     <div className="page-content">{rightPage.content}</div>
                     <div className="page-number">{visiblePages[1] + 1}</div>
@@ -230,8 +204,7 @@ export default function Memoir() {
 
         <div className="mt-4 text-center text-rose-800">
           <p>
-            페이지 {currentPageIndex + 1}-{Math.min(currentPageIndex + 2, pages.length)} / 총{" "}
-            {pages.length}페이지
+            페이지 {currentPageIndex + 1}-{Math.min(currentPageIndex + 2, pages.length)} / 총 {pages.length}페이지
           </p>
         </div>
       </main>
