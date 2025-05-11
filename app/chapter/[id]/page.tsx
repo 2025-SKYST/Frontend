@@ -1,11 +1,11 @@
-"use client";
+"use client"
 
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import { useRouter, useParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { PlusCircle, ArrowLeft, Trash2 } from "lucide-react";
-import Header from "@/components/header";
+import React, { useState, useEffect } from "react"
+import Link from "next/link"
+import { useRouter, useParams } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { PlusCircle, ArrowLeft, Trash2 } from "lucide-react"
+import Header from "@/components/header"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,78 +15,76 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { useAuth } from "@/hooks/useAuth";
-import { getImages } from "@/lib/imageService";
+} from "@/components/ui/alert-dialog"
+import { useAuth } from "@/hooks/useAuth"
+import { getImages } from "@/lib/imageService"
 
 interface Page {
-  id: string;
-  imageUrl: string;
-  tags: string[];
-  description: string;
-  content: string;
+  id: string
+  imageUrl: string
+  tags: string[]
+  description: string
+  content: string
 }
 
 export default function ViewChapter() {
-  const router = useRouter();
-  const params = useParams();
-  const chapterId = params?.id as string;
-  const { getAuthHeader } = useAuth();
+  const router = useRouter()
+  const params = useParams()
+  const chapterId = params?.id as string
+  const { getAuthHeader } = useAuth()
 
-  const [chapterTitle, setChapterTitle] = useState<string>("Loading...");
-  const [pages, setPages] = useState<Page[]>([]);
-  const [deletePageId, setDeletePageId] = useState<string | null>(null);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-
+  const [chapterTitle, setChapterTitle] = useState<string>("Loading...")
+  const [pages, setPages] = useState<Page[]>([])
+  const [deletePageId, setDeletePageId] = useState<string | null>(null)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
   // Function to truncate text
-  const truncateText = (text: string, maxLength: number = 150) => {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + "...";
-  };
+  const truncateText = (text: string, maxLength = 150) => {
+    if (text.length <= maxLength) return text
+    return text.substring(0, maxLength) + "..."
+  }
 
   useEffect(() => {
-    const header = getAuthHeader();
+    const header = getAuthHeader()
     if (!header || Object.keys(header).length === 0) {
-      router.replace("/signin");
-      return;
+      router.replace("/signin")
+      return
     }
 
     getImages(chapterId, header)
       .then((imgs) => {
-        setChapterTitle(`Chapter ${chapterId}`);
+        setChapterTitle(`Chapter ${chapterId}`)
         const mapped: Page[] = imgs.map((img) => ({
           id: String(img.id),
           imageUrl: img.file_url,
           tags: [],
           description: img.content || "(No description)",
           content: img.content || "",
-        }));
-        setPages(mapped);
+        }))
+        setPages(mapped)
       })
       .catch((err) => {
-        console.error("Failed to load chapter images:", err);
-        setChapterTitle("Error loading chapter");
-      });
-  }, [chapterId, getAuthHeader, router]);
+        console.error("Failed to load chapter images:", err)
+        setChapterTitle("Error loading chapter")
+      })
+  }, [chapterId, getAuthHeader, router])
 
-  const addPage = (index: number) =>
-    router.push(`/chapter/${chapterId}/add-page`);
+  const addPage = (index: number) => router.push(`/chapter/${chapterId}/add-page`)
 
   const handleDeleteClick = (pageId: string, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDeletePageId(pageId);
-    setIsDeleteDialogOpen(true);
-  };
+    e.preventDefault()
+    e.stopPropagation()
+    setDeletePageId(pageId)
+    setIsDeleteDialogOpen(true)
+  }
 
   const confirmDelete = () => {
     if (deletePageId) {
-      setPages((prev) => prev.filter((page) => page.id !== deletePageId));
-      setDeletePageId(null);
-      setIsDeleteDialogOpen(false);
+      setPages((prev) => prev.filter((page) => page.id !== deletePageId))
+      setDeletePageId(null)
+      setIsDeleteDialogOpen(false)
     }
-  };
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -96,11 +94,9 @@ export default function ViewChapter() {
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold text-rose-900"></h1>
             <Link href="/my-page">
-              <Button variant="outline"
-            className="border-rose-600 text-rose-800 hover:bg-orange-100">
-              
+              <Button variant="outline" className="border-rose-600 text-rose-800 hover:bg-orange-100">
                 돌아가기
-                <ArrowLeft className="ml" size={16} />
+                <ArrowLeft className="ml-2" size={16} />
               </Button>
             </Link>
           </div>
@@ -141,10 +137,7 @@ export default function ViewChapter() {
                   {pages.map((page, index) => (
                     <React.Fragment key={`pair-${page.id}`}>
                       <div className="flex flex-col items-center justify-center">
-                        <Link
-                          href={`/chapter/${chapterId}/edit/${page.id}`}
-                          className="w-96 relative group"
-                        >
+                        <Link href={`/chapter/${chapterId}/edit/${page.id}`} className="w-96 relative group">
                           <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                             <button
                               onClick={(e) => handleDeleteClick(page.id, e)}
@@ -156,13 +149,12 @@ export default function ViewChapter() {
                             <div className="h-48 overflow-hidden bg-gray-100 flex items-center justify-center">
                               {typeof window !== "undefined" && (
                                 <img
-                                  src={page.imageUrl}
+                                  src={page.imageUrl || "/placeholder.svg"}
                                   alt={page.description}
                                   referrerPolicy="no-referrer"
                                   className="w-full h-full object-cover"
                                   onError={(e) => {
-                                    (e.currentTarget as HTMLImageElement).src =
-                                      "/placeholder.svg";
+                                    ;(e.currentTarget as HTMLImageElement).src = "/placeholder.svg"
                                   }}
                                 />
                               )}
@@ -213,10 +205,7 @@ export default function ViewChapter() {
           </div>
         )}
       </main>
-      <AlertDialog
-        open={isDeleteDialogOpen}
-        onOpenChange={setIsDeleteDialogOpen}
-      >
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>페이지 삭제</AlertDialogTitle>
@@ -226,15 +215,12 @@ export default function ViewChapter() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>취소</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmDelete}
-              className="bg-red-600 hover:bg-red-700"
-            >
+            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
               삭제
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </div>
-  );
+  )
 }
