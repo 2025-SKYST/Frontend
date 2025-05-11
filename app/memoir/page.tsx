@@ -152,7 +152,7 @@ export default function Memoir() {
                 {leftPage && (
                   <div className="left-page-content">
                     <div className="page-header">
-                      <h2 className="text-xl font-semibold text-rose-900">{leftPage.chapterTitle}</h2>
+                      <h2 className=""></h2>
                     </div>
                     <div className="page-image-container">
                       <img src={leftPage.file_url || "/placeholder.svg"} alt="Page image" className="page-image" />
@@ -165,7 +165,7 @@ export default function Memoir() {
                 {rightPage && (
                   <div className="right-page-content">
                     <div className="page-header">
-                      <h2 className="text-xl font-semibold text-rose-900">{rightPage.chapterTitle}</h2>
+                      <h2 className=""></h2>
                     </div>
                     <div className="page-image-container">
                       <img src={rightPage.file_url || "/placeholder.svg"} alt="Page image" className="page-image" />
